@@ -1,0 +1,50 @@
+grammar AsciidoctorGrammar
+
+  rule quoted
+    (sentence? (strong / emphasis / monospaced / mark / superscript / subscript) sentence?)+
+  end
+
+  rule strong
+    '*' [^*]+ '*'
+  end
+
+  rule emphasis
+    '_' [^_]+ '_'
+  end
+
+  rule monospaced
+    '`' [^`]+ '`'
+  end
+
+  rule mark
+    '#' [^#]+ '#'
+  end
+
+  rule superscript
+    '^' [^\^]+ '^'
+  end
+
+  rule subscript
+    '~' [^~]+ '~'
+  end
+
+  rule word
+    [0-9a-zA-Z]+
+  end
+
+  rule number
+    [0-9]+
+  end
+
+  rule symbol
+    [=;,"'//\.]+
+  end
+
+  rule sentence
+    (word / symbol / number / ' ')+
+  end
+
+  rule constrained_monospaced_text
+    (word / ' ' / '*')+
+  end
+end
