@@ -16,3 +16,11 @@ ifdef::status[]
 .*Project health*
 image:https://img.shields.io/travis/Mogztter/asciidoctor-inline-parser/master.svg[Build Status (Travis CI), link=https://travis-ci.org/Mogztter/asciidoctor-inline-parser]
 endif::[]
+
+== Install
+
+Run `bundle` to install development dependencies.
+
+NOTE: If the `bundle` command is not available, run `gem install bundler` to install it.
+
+Run `bundle exec rake` to run the linter and the tests.
