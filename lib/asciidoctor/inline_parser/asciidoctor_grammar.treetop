@@ -1,31 +1,35 @@
 grammar AsciidoctorGrammar
 
+  rule text
+    (quoted)* <Text>
+  end
+
   rule quoted
-    (sentence? (strong / emphasis / monospaced / mark / superscript / subscript) sentence?)+
+    sentence? (strong / emphasis / monospaced / mark / superscript / subscript) sentence? <Expression>
   end
 
   rule strong
-    '*' [^*]+ '*'
+    '*' [^*]+ '*' <StrongQuoted>
   end
 
   rule emphasis
-    '_' [^_]+ '_'
+    '_' content_value:([^_]+) '_' <EmphasisQuoted>
   end
 
   rule monospaced
-    '`' [^`]+ '`'
+    '`' [^`]+ '`' <MonospacedQuoted>
   end
 
   rule mark
-    '#' [^#]+ '#'
+    '#' [^#]+ '#' <MarkQuoted>
   end
 
   rule superscript
-    '^' [^\^]+ '^'
+    '^' [^\^]+ '^' <SuperscriptQuoted>
   end
 
   rule subscript
-    '~' [^~]+ '~'
+    '~' [^~]+ '~' <SubscriptQuoted>
   end
 
   rule word
@@ -37,11 +41,11 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol
-    [=;,"'//\.]+
+    [=;,"'//\.!]+
   end
 
   rule sentence
-    (word / symbol / number / ' ')+
+    (word / symbol / number / ' ')+ <Sentence>
   end
 
   rule constrained_monospaced_text

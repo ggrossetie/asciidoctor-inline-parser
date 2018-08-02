@@ -15,3 +15,16 @@ private def debug ast
     p 'No match'
   end
 end
+
+private def find_by condition, node, result = []
+  result if node.nil?
+  node.elements.each do |e|
+    result << e if condition.call(e)
+    find_by condition, e, result if e.elements && !e.elements.empty?
+  end
+  result
+end
+
+private def node_type_must_be name
+  ->(node) { node.extension_modules.map(&:to_s).include? "AsciidoctorGrammar::#{name}0" }
+end
