@@ -6,7 +6,7 @@ require File.join __dir__, 'node_extensions.rb'
 require './lib/asciidoctor/inline_parser/asciidoctor_grammar'
 
 module Asciidoctor
-  # Asciodoctor Inline Parser
+  # Asciidoctor Inline Parser
   module InlineParser
     @parser = AsciidoctorGrammarParser.new
 
