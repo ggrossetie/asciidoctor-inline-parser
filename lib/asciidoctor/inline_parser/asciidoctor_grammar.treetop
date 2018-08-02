@@ -5,7 +5,7 @@ grammar AsciidoctorGrammar
   end
 
   rule quoted
-    sentence? (strong / emphasis / monospaced / mark / superscript / subscript) sentence? <Expression>
+    (strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
   end
 
   rule strong
@@ -13,7 +13,7 @@ grammar AsciidoctorGrammar
   end
 
   rule emphasis
-    '_' content_value:([^_]+) '_' <EmphasisQuoted>
+    '_' [^_]+ '_' <EmphasisQuoted>
   end
 
   rule monospaced
@@ -41,14 +41,6 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol
-    [=;,"'//\.!]+
-  end
-
-  rule sentence
-    (word / symbol / number / ' ')+ <Sentence>
-  end
-
-  rule constrained_monospaced_text
-    (word / ' ' / '*')+
+    [=;,"'//\.!_*]+
   end
 end

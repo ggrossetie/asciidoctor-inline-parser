@@ -70,4 +70,13 @@ describe 'InlineParser' do
     emphasis_nodes.size.must_equal 1
     emphasis_nodes.first.text_value.must_equal '_really_'
   end
+  it 'must not match an emphasis' do
+    ast = ::Asciidoctor::InlineParser.parse('*_id* word_')
+    ast.text_value.must_equal '*_id* word_'
+    emphasis_nodes = find_by (node_type_must_be 'Emphasis'), ast
+    emphasis_nodes.size.must_equal 0
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 1
+    strong_nodes.first.content.must_equal '_id'
+  end
 end
