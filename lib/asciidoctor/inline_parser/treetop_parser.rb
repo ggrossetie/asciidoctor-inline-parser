@@ -18,27 +18,27 @@ module Asciidoctor
       ast
     end
 
-    def self.recurse root_node
-      return if root_node.elements.nil?
-      root_node.elements.each do |node|
-        if node.class.name == 'AsciidoctorGrammar::StrongQuoted'
-          ast = parse node.content
-          assign_node ast, node unless ast.nil?
+    def self.recurse node
+      return if node.elements.nil?
+      node.elements.each do |el|
+        if el.class.name == 'AsciidoctorGrammar::StrongQuoted'
+          ast = parse el.content
+          assign_node ast, el unless ast.nil?
         end
-        recurse node
+        recurse el
       end
     end
 
-    def self.clean_tree root_node
-      return if root_node.elements.nil?
-      root_node.elements.delete_if { |node| node.class.name == 'Treetop::Runtime::SyntaxNode' }
-      root_node.elements.each { |node| clean_tree node }
+    def self.clean_tree node
+      return if node.elements.nil?
+      node.elements.delete_if { |el| el.class.name == 'Treetop::Runtime::SyntaxNode' }
+      node.elements.each { |el| clean_tree el }
     end
 
-    def self.assign_node root, node
+    def self.assign_node parent, node
       node.elements.clear
-      root.parent = node
-      node.elements << root
+      parent.parent = node
+      node.elements << parent
     end
   end
 end
