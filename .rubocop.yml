@@ -1,0 +1,15 @@
+AllCops:
+  TargetRubyVersion: 2.2
+
+Metrics/LineLength:
+  Max: 120
+
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses
+
+Style/SymbolArray:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'test/*'

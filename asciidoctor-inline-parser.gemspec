@@ -1,4 +1,4 @@
-require File.expand_path('../lib/asciidoctor/inline_parser/version', __FILE__)
+require File.expand_path('lib/asciidoctor/inline_parser/version', __dir__)
 
 Gem::Specification.new do |s|
   s.name     = 'asciidoctor-templates-compiler'
@@ -13,12 +13,13 @@ Gem::Specification.new do |s|
   s.files    = Dir['lib/**/*', '*.gemspec', 'LICENSE*', 'README*']
   s.executables = Dir['bin/*'].map { |f| File.basename(f) }
 
-  s.required_ruby_version = '>= 2.1'
+  s.required_ruby_version = '>= 2.2'
 
   s.add_runtime_dependency 'asciidoctor', '~> 1.5'
   s.add_runtime_dependency 'treetop', '~> 1.6.10'
 
-  s.add_development_dependency 'rake', '~> 12.0'
   s.add_development_dependency 'minitest', '~> 5.3.0'
+  s.add_development_dependency 'rake', '~> 12.0'
+  s.add_development_dependency 'rubocop', '~> 0.58.2'
   s.add_development_dependency 'simplecov', '~> 0.14'
 end

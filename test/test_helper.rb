@@ -3,7 +3,6 @@ SimpleCov.start
 
 require 'minitest/autorun'
 
-
 private def debug ast
   if ast
     p ast
