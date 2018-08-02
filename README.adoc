@@ -14,7 +14,7 @@ CAUTION: This project is a work in progress.
 
 ifdef::status[]
 .*Project health*
-image:https://img.shields.io/travis/Mogztter/asciidoctor-inline-parser/master.svg[Build Status (Travis CI), link=https://travis-ci.org/Mogztter/asciidoctor-inline-parser]
+image:https://travis-ci.org/Mogztter/asciidoctor-inline-parser.svg?branch=master[Build Status (Travis CI), link=https://travis-ci.org/Mogztter/asciidoctor-inline-parser]
 endif::[]
 
 == Install
