@@ -79,4 +79,10 @@ describe 'InlineParser' do
     strong_nodes.size.must_equal 1
     strong_nodes.first.content.must_equal '_id'
   end
+  it 'must not match a bold' do
+    ast = ::Asciidoctor::InlineParser.parse('Escaped star symbol will not produce \*bold*.')
+    ast.text_value.must_equal 'Escaped star symbol will not produce \*bold*.'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 0
+  end
 end

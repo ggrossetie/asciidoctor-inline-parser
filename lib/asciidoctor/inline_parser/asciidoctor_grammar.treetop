@@ -5,7 +5,7 @@ grammar AsciidoctorGrammar
   end
 
   rule quoted
-    (strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
+    (escaped_quoted_symbol / strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
   end
 
   rule strong
@@ -38,6 +38,10 @@ grammar AsciidoctorGrammar
 
   rule number
     [0-9]+
+  end
+
+  rule escaped_quoted_symbol
+    ( '\*' / '\_' / '\`' / '\#' / '\^' / '\~' )
   end
 
   rule symbol
