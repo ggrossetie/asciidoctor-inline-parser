@@ -67,14 +67,14 @@ module AsciidoctorGrammar
   # Double curved
   class DoubleCurvedQuoted < ::AsciidoctorGrammar::QuotedNode
     def to_html
-      "“#{@comprehensive_elements.first.to_html}”"
+      "&#8220;#{@comprehensive_elements.first.to_html}&#8221;" # REMIND: Opal won't compile the unicode characters
     end
   end
 
   # Single curved
   class SingleCurvedQuoted < ::AsciidoctorGrammar::QuotedNode
     def to_html
-      "‘#{@comprehensive_elements.first.to_html}’"
+      "&#8216;#{@comprehensive_elements.first.to_html}&#8217;" # REMIND: Opal won't compile the unicode characters
     end
   end
 

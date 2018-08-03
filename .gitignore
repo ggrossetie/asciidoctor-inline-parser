@@ -7,3 +7,6 @@ Gemfile.lock
 *.gem
 /.ruby-gemset
 /.ruby-version
+/node_modules
+/build
+/lib/asciidoctor/inline_parser/asciidoctor_grammar.rb

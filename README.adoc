@@ -24,3 +24,14 @@ Run `bundle` to install development dependencies.
 NOTE: If the `bundle` command is not available, run `gem install bundler` to install it.
 
 Run `bundle exec rake` to run the linter and the tests.
+
+== Compile to JavaScript
+
+Run `npm install` to install development dependencies.
+
+NOTE: If the `npm` command is not available, install Node.js 8+.
+
+Run `npm run compile` to compile the parser to JavaScript.
+
+Run `npm run test` to run the tests.
+
