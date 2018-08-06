@@ -57,7 +57,7 @@ grammar AsciidoctorGrammar
   end
 
   rule constrained_invalid_start
-    ( constrained_invalid_mark / ',' / ';' / '}' )
+    ( constrained_invalid_mark / ':' / ';' / '}' )
   end
 
   rule constrained_invalid_end
@@ -85,6 +85,6 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol
-    [=;,"'//\.!_*]+
+    [=;:},"'//\.!_*]+
   end
 end

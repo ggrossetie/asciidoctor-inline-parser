@@ -131,4 +131,22 @@ describe 'InlineParser' do
     strong_nodes = find_by (node_type_must_be 'Strong'), ast
     strong_nodes.size.must_equal 0
   end
+  it 'must parse constrained quote with a trailing colon' do
+    ast = ::Asciidoctor::InlineParser.parse('I should use:*unconstrained* quote.')
+    ast.text_value.must_equal 'I should use:*unconstrained* quote.'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 0
+  end
+  it 'must parse constrained quote with a trailing semi-colon' do
+    ast = ::Asciidoctor::InlineParser.parse('I should use;*unconstrained* quote.')
+    ast.text_value.must_equal 'I should use;*unconstrained* quote.'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 0
+  end
+  it 'must parse constrained quote with a trailing curly brace' do
+    ast = ::Asciidoctor::InlineParser.parse('I should use}*unconstrained* quote.')
+    ast.text_value.must_equal 'I should use}*unconstrained* quote.'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 0
+  end
 end
