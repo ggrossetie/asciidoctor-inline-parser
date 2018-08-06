@@ -8,7 +8,7 @@ require './lib/asciidoctor/inline_parser/asciidoctor_grammar'
 module Asciidoctor
   # Asciidoctor Inline Parser
   module InlineParser
-    @parser = AsciidoctorGrammarParser.new
+    @parser = ::AsciidoctorGrammarParser.new
 
     def self.parse text
       ast = @parser.parse text
@@ -21,12 +21,16 @@ module Asciidoctor
     def self.recurse node
       return if node.elements.nil?
       node.elements.each do |el|
-        if el.class.name == 'AsciidoctorGrammar::StrongQuoted'
+        if quoted_node? el
           ast = parse el.content
           assign_node ast, el unless ast.nil?
         end
         recurse el
       end
+    end
+
+    def self.quoted_node? node
+      node.class.ancestors.include? ::AsciidoctorGrammar::QuotedNode
     end
 
     def self.clean_tree node

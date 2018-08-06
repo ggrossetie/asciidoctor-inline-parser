@@ -1,36 +1,38 @@
 module AsciidoctorGrammar
-  class Text < Treetop::Runtime::SyntaxNode
+  class Text < ::Treetop::Runtime::SyntaxNode
   end
 
-  class Sentence < Treetop::Runtime::SyntaxNode
+  class Sentence < ::Treetop::Runtime::SyntaxNode
   end
 
-  class Expression < Treetop::Runtime::SyntaxNode
+  class Expression < ::Treetop::Runtime::SyntaxNode
   end
 
-  # Strong node
-  class StrongQuoted < Treetop::Runtime::SyntaxNode
+  class QuotedContent < ::Treetop::Runtime::SyntaxNode
+  end
+
+  # Quoted node
+  class QuotedNode < ::Treetop::Runtime::SyntaxNode
     def content
-      @elements[1].text_value
+      @elements.select { |el| el.instance_of? ::AsciidoctorGrammar::QuotedContent }.first.text_value
     end
   end
 
-  # Emphasis node
-  class EmphasisQuoted < Treetop::Runtime::SyntaxNode
-    def content
-      @elements[1].text_value
-    end
+  class StrongQuoted < ::AsciidoctorGrammar::QuotedNode
   end
 
-  class MonospacedQuoted < Treetop::Runtime::SyntaxNode
+  class EmphasisQuoted < ::AsciidoctorGrammar::QuotedNode
   end
 
-  class MarkQuoted < Treetop::Runtime::SyntaxNode
+  class MonospacedQuoted < ::AsciidoctorGrammar::QuotedNode
   end
 
-  class SuperscriptQuoted < Treetop::Runtime::SyntaxNode
+  class MarkQuoted < ::AsciidoctorGrammar::QuotedNode
   end
 
-  class SubscriptQuoted < Treetop::Runtime::SyntaxNode
+  class SuperscriptQuoted < ::AsciidoctorGrammar::QuotedNode
+  end
+
+  class SubscriptQuoted < ::AsciidoctorGrammar::QuotedNode
   end
 end

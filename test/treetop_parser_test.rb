@@ -6,9 +6,18 @@ describe 'InlineParser' do
   it 'must parse a bold statement' do
     ast = ::Asciidoctor::InlineParser.parse('This is a *bold* statement.')
     ast.text_value.must_equal 'This is a *bold* statement.'
-    mark_nodes = find_by (node_type_must_be 'Strong'), ast
-    mark_nodes.size.must_equal 1
-    mark_nodes.first.text_value.must_equal '*bold*'
+    nodes = find_by (node_type_must_be 'Strong'), ast
+    nodes.size.must_equal 1
+    nodes.first.text_value.must_equal '*bold*'
+    nodes.first.content.must_equal 'bold'
+  end
+  it 'must parse a single bold word' do
+    ast = ::Asciidoctor::InlineParser.parse('*bold*')
+    ast.text_value.must_equal '*bold*'
+    nodes = find_by (node_type_must_be 'Strong'), ast
+    nodes.size.must_equal 1
+    nodes.first.text_value.must_equal '*bold*'
+    nodes.first.content.must_equal 'bold'
   end
   it 'must parse mark' do
     ast = ::Asciidoctor::InlineParser.parse('#Mark my words#')
@@ -82,6 +91,43 @@ describe 'InlineParser' do
   it 'must not match a bold' do
     ast = ::Asciidoctor::InlineParser.parse('Escaped star symbol will not produce \*bold*.')
     ast.text_value.must_equal 'Escaped star symbol will not produce \*bold*.'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 0
+  end
+  it 'must parse deep nested quoted text' do
+    ast = ::Asciidoctor::InlineParser.parse('*Deep _nested `#quoted#` ^text^_*')
+    ast.text_value.must_equal '*Deep _nested `#quoted#` ^text^_*'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 1
+    strong_nodes.first.content.must_equal 'Deep _nested `#quoted#` ^text^_'
+    emphasis_nodes = find_by (node_type_must_be 'Emphasis'), ast
+    emphasis_nodes.size.must_equal 1
+    emphasis_nodes.first.content.must_equal 'nested `#quoted#` ^text^'
+    monospaced_nodes = find_by (node_type_must_be 'Monospaced'), ast
+    monospaced_nodes.size.must_equal 1
+    monospaced_nodes.first.content.must_equal '#quoted#'
+    mark_nodes = find_by (node_type_must_be 'Mark'), ast
+    mark_nodes.size.must_equal 1
+    mark_nodes.first.content.must_equal 'quoted'
+    superscript_nodes = find_by (node_type_must_be 'Superscript'), ast
+    superscript_nodes.size.must_equal 1
+    superscript_nodes.first.content.must_equal 'text'
+  end
+  it 'must parse constrained quote inside a word' do
+    ast = ::Asciidoctor::InlineParser.parse('I should use unconstrained qu*o*te.')
+    ast.text_value.must_equal 'I should use unconstrained qu*o*te.'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 0
+  end
+  it 'must parse constrained quote inside a word with numbers' do
+    ast = ::Asciidoctor::InlineParser.parse('*mc*2')
+    ast.text_value.must_equal '*mc*2'
+    strong_nodes = find_by (node_type_must_be 'Strong'), ast
+    strong_nodes.size.must_equal 0
+  end
+  it 'must parse constrained quote with spaces' do
+    ast = ::Asciidoctor::InlineParser.parse('I * should * use unconstrained quote.')
+    ast.text_value.must_equal 'I * should * use unconstrained quote.'
     strong_nodes = find_by (node_type_must_be 'Strong'), ast
     strong_nodes.size.must_equal 0
   end

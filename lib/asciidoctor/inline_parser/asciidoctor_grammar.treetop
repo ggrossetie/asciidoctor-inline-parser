@@ -9,27 +9,67 @@ grammar AsciidoctorGrammar
   end
 
   rule strong
-    '*' [^*]+ '*' <StrongQuoted>
+    (!constrained_invalid_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_invalid_end) <StrongQuoted>
+  end
+
+  rule strong_content
+    [^*]+ <QuotedContent>
   end
 
   rule emphasis
-    '_' [^_]+ '_' <EmphasisQuoted>
+    (!constrained_invalid_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_invalid_end) <EmphasisQuoted>
+  end
+
+  rule emphasis_content
+    [^_]+ <QuotedContent>
   end
 
   rule monospaced
-    '`' [^`]+ '`' <MonospacedQuoted>
+    (!constrained_invalid_start) '`' monospaced_content '`' (!constrained_invalid_end) <MonospacedQuoted>
+  end
+
+  rule monospaced_content
+    [^`]+ <QuotedContent>
   end
 
   rule mark
-    '#' [^#]+ '#' <MarkQuoted>
+    (!constrained_invalid_start) '#' mark_content '#' (!constrained_invalid_end) <MarkQuoted>
+  end
+
+  rule mark_content
+    [^#]+ <QuotedContent>
   end
 
   rule superscript
-    '^' [^\^]+ '^' <SuperscriptQuoted>
+    (!constrained_invalid_start) '^' superscript_content '^' (!constrained_invalid_end) <SuperscriptQuoted>
+  end
+
+  rule superscript_content
+    [^\^]+ <QuotedContent>
   end
 
   rule subscript
-    '~' [^~]+ '~' <SubscriptQuoted>
+    (!constrained_invalid_start) '~' (!spaces) subscript_content (!spaces) '~' (!constrained_invalid_end) <SubscriptQuoted>
+  end
+
+  rule subscript_content
+    [^~]+ <QuotedContent>
+  end
+
+  rule constrained_invalid_start
+    ( constrained_invalid_mark / ',' / ';' / '}' )
+  end
+
+  rule constrained_invalid_end
+    ( constrained_invalid_mark )
+  end
+
+  rule constrained_invalid_mark
+    [a-zA-Z0-9]
+  end
+
+  rule spaces
+    [ ]+
   end
 
   rule word
