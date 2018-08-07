@@ -5,23 +5,39 @@ grammar AsciidoctorGrammar
   end
 
   rule quoted
-    (escaped_quoted_symbol / strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
+    (escaped_quoted_symbol / unconstrained_strong / unconstrained_emphasis / unconstrained_mark / strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
   end
 
   rule strong
     (!constrained_invalid_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_invalid_end) <StrongQuoted>
   end
 
+  rule unconstrained_strong
+    '**' strong_content '**' <StrongQuoted>
+  end
+
   rule strong_content
-    [^*]+ <QuotedContent>
+    (strong_content_greedy)+ <QuotedContent>
+  end
+
+  rule strong_content_greedy
+    ( [^*] / '*' constrained_invalid_mark )
   end
 
   rule emphasis
     (!constrained_invalid_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_invalid_end) <EmphasisQuoted>
   end
 
+  rule unconstrained_emphasis
+    '__' emphasis_content '__' <EmphasisQuoted>
+  end
+
   rule emphasis_content
-    [^_]+ <QuotedContent>
+    (emphasis_content_greedy)+ <QuotedContent>
+  end
+
+  rule emphasis_content_greedy
+    ( [^_] / '_' constrained_invalid_mark )
   end
 
   rule monospaced
@@ -34,6 +50,10 @@ grammar AsciidoctorGrammar
 
   rule mark
     (!constrained_invalid_start) '#' mark_content '#' (!constrained_invalid_end) <MarkQuoted>
+  end
+
+  rule unconstrained_mark
+    '##' mark_content '##' <MarkQuoted>
   end
 
   rule mark_content
@@ -85,6 +105,6 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol
-    [=;:},"'//\.!_*]+
+    [-=;:},"'\.!_*#\\]+
   end
 end
