@@ -9,7 +9,7 @@ grammar AsciidoctorGrammar
   end
 
   rule strong
-    (!constrained_invalid_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_invalid_end) <StrongQuoted>
+    (!constrained_mark_exception_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_mark_exception_end) <StrongQuoted>
   end
 
   rule unconstrained_strong
@@ -21,11 +21,11 @@ grammar AsciidoctorGrammar
   end
 
   rule strong_content_greedy
-    ( [^*] / '*' constrained_invalid_mark )
+    ( [^*] / '*' constrained_mark_exception )
   end
 
   rule emphasis
-    (!constrained_invalid_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_invalid_end) <EmphasisQuoted>
+    (!constrained_mark_exception_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_mark_exception_end) <EmphasisQuoted>
   end
 
   rule unconstrained_emphasis
@@ -37,11 +37,11 @@ grammar AsciidoctorGrammar
   end
 
   rule emphasis_content_greedy
-    ( [^_] / '_' constrained_invalid_mark )
+    ( [^_] / '_' constrained_mark_exception )
   end
 
   rule monospaced
-    (!constrained_invalid_start) '`' monospaced_content '`' (!constrained_invalid_end) <MonospacedQuoted>
+    (!constrained_mark_exception_start) '`' monospaced_content '`' (!constrained_mark_exception_end) <MonospacedQuoted>
   end
 
   rule monospaced_content
@@ -49,7 +49,7 @@ grammar AsciidoctorGrammar
   end
 
   rule mark
-    (!constrained_invalid_start) '#' mark_content '#' (!constrained_invalid_end) <MarkQuoted>
+    (!constrained_mark_exception_start) '#' (!spaces) mark_content (!spaces) '#' (!constrained_mark_exception_end) <MarkQuoted>
   end
 
   rule unconstrained_mark
@@ -57,11 +57,15 @@ grammar AsciidoctorGrammar
   end
 
   rule mark_content
-    [^#]+ <QuotedContent>
+    (mark_content_greedy)+ <QuotedContent>
+  end
+
+  rule mark_content_greedy
+    ( [^#] / '#' constrained_mark_exception )
   end
 
   rule superscript
-    (!constrained_invalid_start) '^' superscript_content '^' (!constrained_invalid_end) <SuperscriptQuoted>
+    (!constrained_mark_exception_start) '^' superscript_content '^' (!constrained_mark_exception_end) <SuperscriptQuoted>
   end
 
   rule superscript_content
@@ -69,22 +73,26 @@ grammar AsciidoctorGrammar
   end
 
   rule subscript
-    (!constrained_invalid_start) '~' (!spaces) subscript_content (!spaces) '~' (!constrained_invalid_end) <SubscriptQuoted>
+    (!constrained_mark_exception_start) '~' (!spaces) subscript_content (!spaces) '~' (!constrained_mark_exception_end) <SubscriptQuoted>
   end
 
   rule subscript_content
     [^~]+ <QuotedContent>
   end
 
-  rule constrained_invalid_start
-    ( constrained_invalid_mark / ':' / ';' / '}' )
+  rule constrained_mark_exception_start
+    ( constrained_mark_exception / constrained_mark_exception_symbol )
   end
 
-  rule constrained_invalid_end
-    ( constrained_invalid_mark )
+  rule constrained_mark_exception_symbol
+    ( ':' / ';' / '}' )
   end
 
-  rule constrained_invalid_mark
+  rule constrained_mark_exception_end
+    ( constrained_mark_exception )
+  end
+
+  rule constrained_mark_exception
     [a-zA-Z0-9]
   end
 
