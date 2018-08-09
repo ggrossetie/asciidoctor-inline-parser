@@ -349,8 +349,18 @@ describe 'InlineParser' do
   end
   it 'should parse a constrained strong string with a trailing curly brace' do
     ast = ::Asciidoctor::InlineParser.parse('I should use}*unconstrained* quote.')
+    p ast
     ast.text_value.must_equal 'I should use}*unconstrained* quote.'
     strong_nodes = find_by (node_type_must_be 'Strong'), ast
     strong_nodes.size.must_equal 0
+  end
+  it 'should parse an unconstrained strong string with a trailing semi-colon' do
+    ast = ::Asciidoctor::InlineParser.parse('&copy;__the authors__')
+    p ast
+    ast.text_value.must_equal '&copy;__the authors__'
+    nodes = find_by (node_type_must_be 'UnconstrainedEmphasis'), ast
+    nodes.size.must_equal 1
+    nodes.first.text_value.must_equal '__the authors__'
+    nodes.first.content.must_equal 'the authors'
   end
 end

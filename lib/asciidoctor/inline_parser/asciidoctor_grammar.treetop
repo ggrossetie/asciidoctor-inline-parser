@@ -81,11 +81,7 @@ grammar AsciidoctorGrammar
   end
 
   rule constrained_mark_exception_start
-    ( constrained_mark_exception / constrained_mark_exception_symbol )
-  end
-
-  rule constrained_mark_exception_symbol
-    ( ':' / ';' / '}' )
+    ( constrained_mark_exception / ':' / ';' / '}' )
   end
 
   rule constrained_mark_exception_end
@@ -113,6 +109,30 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol
-    [-=;:},"'\.!_*#\\]+
+    ( symbol_constrained / symbol_basic / symbol_unconstrained / quoted_symbol )
+  end
+
+  rule symbol_basic
+    [&-=,"'\.!\\]
+  end
+
+  rule symbol_constrained
+    [:;}]+ constrained_quoted_symbol constrained_mark_exception
+  end
+
+  rule symbol_unconstrained
+    [:;}]+ (!unconstrained_quoted_symbol)
+  end
+
+  rule quoted_symbol
+    [_*#`^~]+
+  end
+
+  rule constrained_quoted_symbol
+    ( '_' / '*' / '#' )
+  end
+
+  rule unconstrained_quoted_symbol
+    ( '__' / '**' / '##' )
   end
 end
