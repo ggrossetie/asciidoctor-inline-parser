@@ -9,22 +9,19 @@ module AsciidoctorGrammar
   class Sentence < ::Treetop::Runtime::SyntaxNode
   end
 
+  # Expression
   class Expression < ::Treetop::Runtime::SyntaxNode
     def to_html
       raw_text = text_value
-      if @comprehensive_elements.empty?
-        raw_text
-      else
-        @comprehensive_elements.reverse_each do |el|
-          unless el.instance_of? ::Treetop::Runtime::SyntaxNode
-            raw_text[el.interval] = el.to_html
-          end
-        end
+      return text_value if @comprehensive_elements.empty?
+      @comprehensive_elements.reverse_each do |el|
+        raw_text[el.interval] = el.to_html unless el.instance_of? ::Treetop::Runtime::SyntaxNode
       end
       raw_text
     end
   end
 
+  # Quoted content
   class QuotedContent < ::Treetop::Runtime::SyntaxNode
     def to_html
       @comprehensive_elements.first.to_html
@@ -42,12 +39,14 @@ module AsciidoctorGrammar
     end
   end
 
+  # Strong quoted
   class StrongQuoted < ::AsciidoctorGrammar::QuotedNode
     def to_html
       "<strong>#{@comprehensive_elements.first.to_html}</strong>"
     end
   end
 
+  # Emphasis quoted
   class EmphasisQuoted < ::AsciidoctorGrammar::QuotedNode
     def to_html
       "<em>#{@comprehensive_elements.first.to_html}</em>"
