@@ -37,6 +37,10 @@ module AsciidoctorGrammar
     def nested?
       @elements.any? { |el| el.class.ancestors.include? ::AsciidoctorGrammar::QuotedNode }
     end
+
+    def role
+      @elements.select { |el| el.instance_of? ::AsciidoctorGrammar::Role }.first.name
+    end
   end
 
   # Strong
@@ -81,7 +85,18 @@ module AsciidoctorGrammar
     end
   end
 
+  # Mark
   class MarkQuoted < ::AsciidoctorGrammar::QuotedNode
+  end
+
+  # Role
+  class Role < ::Treetop::Runtime::SyntaxNode
+    def name
+      @elements.select { |el| el.instance_of? ::AsciidoctorGrammar::RoleIdentifier }.first.text_value
+    end
+  end
+
+  class RoleIdentifier < ::Treetop::Runtime::SyntaxNode
   end
 
   class SuperscriptQuoted < ::AsciidoctorGrammar::QuotedNode

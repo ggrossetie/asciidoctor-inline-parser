@@ -6,7 +6,7 @@ grammar AsciidoctorGrammar
 
   rule quoted
     (
-      escaped_quoted_symbol /
+      escaped_quoted_symbol / escaped_role_symbol /
       double_curved_quotes / single_curved_quotes /
       literal /
       unconstrained_strong / unconstrained_emphasis / unconstrained_monospaced / unconstrained_mark /
@@ -40,11 +40,11 @@ grammar AsciidoctorGrammar
   end
 
   rule strong
-    (!constrained_mark_exception_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_mark_exception_end) <StrongQuoted>
+    role? (!constrained_mark_exception_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_mark_exception_end) <StrongQuoted>
   end
 
   rule unconstrained_strong
-    '**' strong_content '**' <StrongQuoted>
+    role? '**' strong_content '**' <StrongQuoted>
   end
 
   rule strong_content
@@ -56,11 +56,11 @@ grammar AsciidoctorGrammar
   end
 
   rule emphasis
-    (!constrained_mark_exception_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_mark_exception_end) <EmphasisQuoted>
+    role? (!constrained_mark_exception_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_mark_exception_end) <EmphasisQuoted>
   end
 
   rule unconstrained_emphasis
-    '__' emphasis_content '__' <EmphasisQuoted>
+    role? '__' emphasis_content '__' <EmphasisQuoted>
   end
 
   rule emphasis_content
@@ -72,11 +72,11 @@ grammar AsciidoctorGrammar
   end
 
   rule monospaced
-    (!constrained_mark_exception_start) '`' (!spaces) monospaced_content (!spaces) '`' (!constrained_mark_exception_end) <MonospacedQuoted>
+    role? (!constrained_mark_exception_start) '`' (!spaces) monospaced_content (!spaces) '`' (!constrained_mark_exception_end) <MonospacedQuoted>
   end
 
   rule unconstrained_monospaced
-    '``' monospaced_content '``' <MonospacedQuoted>
+    role? '``' monospaced_content '``' <MonospacedQuoted>
   end
 
   rule monospaced_content
@@ -88,11 +88,11 @@ grammar AsciidoctorGrammar
   end
 
   rule mark
-    (!constrained_mark_exception_start) '#' (!spaces) mark_content (!spaces) '#' (!constrained_mark_exception_end) <MarkQuoted>
+    role? (!constrained_mark_exception_start) '#' (!spaces) mark_content (!spaces) '#' (!constrained_mark_exception_end) <MarkQuoted>
   end
 
   rule unconstrained_mark
-    '##' mark_content '##' <MarkQuoted>
+    role? '##' mark_content '##' <MarkQuoted>
   end
 
   rule mark_content
@@ -119,6 +119,10 @@ grammar AsciidoctorGrammar
     [^~]+ <QuotedContent>
   end
 
+  rule role
+    '[' '.'? role_identifier ']' <Role>
+  end
+
   rule constrained_mark_exception_start
     ( constrained_mark_exception / ':' / ';' / '}' )
   end
@@ -135,12 +139,16 @@ grammar AsciidoctorGrammar
     ( '\*' / '\_' / '\`' / '\#' / '\^' / '\~' )
   end
 
+  rule escaped_role_symbol
+    ( '\[' )
+  end
+
   rule symbol
     ( symbol_constrained / symbol_basic / symbol_unconstrained / quoted_symbol )
   end
 
   rule symbol_basic
-    [&\-:;=,"'\.!\\{}]
+    [&\-:;=,"'\.!\\{}\]\[]
   end
 
   rule symbol_constrained
@@ -169,6 +177,10 @@ grammar AsciidoctorGrammar
 
   rule word
     [0-9a-zA-Z]+
+  end
+
+  rule role_identifier
+    [0-9a-zA-Z]+ <RoleIdentifier>
   end
 
   rule number
