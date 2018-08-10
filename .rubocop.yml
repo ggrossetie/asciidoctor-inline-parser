@@ -3,6 +3,8 @@ AllCops:
 
 Metrics/LineLength:
   Max: 120
+  Exclude:
+    - 'test/*'
 
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses

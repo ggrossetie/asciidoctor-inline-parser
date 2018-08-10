@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
 require 'asciidoctor/inline_parser/version'
-require 'asciidoctor/inline_parser/treetop_parser'
+require 'asciidoctor/inline_parser/parser'

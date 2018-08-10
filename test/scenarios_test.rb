@@ -1,6 +1,6 @@
 require_relative 'test_helper'
 require 'asciidoctor'
-require 'asciidoctor/inline_parser/treetop_parser'
+require 'asciidoctor/inline_parser/parser'
 
 describe 'scenario' do
   let(:doc) { ::Asciidoctor::InlineParser.parse input }
