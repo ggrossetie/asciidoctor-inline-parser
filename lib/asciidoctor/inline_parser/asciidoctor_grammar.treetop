@@ -92,18 +92,6 @@ grammar AsciidoctorGrammar
     [a-zA-Z0-9]
   end
 
-  rule spaces
-    [ ]+
-  end
-
-  rule word
-    [0-9a-zA-Z]+
-  end
-
-  rule number
-    [0-9]+
-  end
-
   rule escaped_quoted_symbol
     ( '\*' / '\_' / '\`' / '\#' / '\^' / '\~' )
   end
@@ -113,7 +101,7 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol_basic
-    [&-=,"'\.!\\{}]
+    [&\-:;=,"'\.!\\{}]
   end
 
   rule symbol_constrained
@@ -134,5 +122,17 @@ grammar AsciidoctorGrammar
 
   rule unconstrained_quoted_symbol
     ( '__' / '**' / '##' / '``')
+  end
+
+  rule spaces
+    [ ]+
+  end
+
+  rule word
+    [0-9a-zA-Z]+
+  end
+
+  rule number
+    [0-9]+
   end
 end

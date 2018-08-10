@@ -2,8 +2,6 @@ require_relative 'test_helper'
 require 'asciidoctor'
 require 'asciidoctor/inline_parser/parser'
 
-BACKSLASH = %(\x5c).freeze
-
 describe 'inline parser' do
   it 'should parse a single-line unconstrained marked string' do
     ast = ::Asciidoctor::InlineParser.parse %(##--anything goes ##)

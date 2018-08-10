@@ -3,6 +3,8 @@ SimpleCov.start
 
 require 'minitest/autorun'
 
+BACKSLASH = %(\x5c).freeze
+
 private def debug ast
   if ast
     p ast
