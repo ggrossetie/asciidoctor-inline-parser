@@ -148,7 +148,7 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol_basic
-    [&\-:;=,"'\.!\\{}\]\[]
+    [&\-:;=,"'\.!\\{}\]\[] # FIXME: should include all "symbols"
   end
 
   rule symbol_constrained
@@ -176,7 +176,7 @@ grammar AsciidoctorGrammar
   end
 
   rule word
-    [0-9a-zA-Z]+
+    [0-9a-zA-Z]+ # FIXME: should include all unicode characters ?
   end
 
   rule role_identifier

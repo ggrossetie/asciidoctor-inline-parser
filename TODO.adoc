@@ -1,8 +1,12 @@
 = TODO
 
+* [x] Quotes
+** [x] Constrained (strong, emphasis, mark, monospaced, subscript, superscript)
+** [x] Unconstrained (strong, emphasis, mark, monospaced)
+* [x] Role assigned to quoted text (shorthand syntax `+[.rolename]#mark#+`)
+* [x] Smart quotes
+** [x] Double curved quotes
+** [x] Single curved quotes
 * [ ] Inline macros
 * [ ] Passthrough
-* [ ] Smart quotes
-** [ ] Double curved quotes
-** [ ] Single curved quotes
 * [ ] Replacements: should we reuse the we should https://github.com/asciidoctor/asciidoctor/blob/master/lib/asciidoctor/substitutors.rb[Substitutors.rb] ?
