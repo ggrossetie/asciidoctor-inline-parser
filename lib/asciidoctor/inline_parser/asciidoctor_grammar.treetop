@@ -5,7 +5,30 @@ grammar AsciidoctorGrammar
   end
 
   rule quoted
-    (escaped_quoted_symbol / unconstrained_strong / unconstrained_emphasis / unconstrained_mark / literal / strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
+    (
+      escaped_quoted_symbol /
+      double_curved_quotes / single_curved_quotes /
+      literal /
+      unconstrained_strong / unconstrained_emphasis / unconstrained_monospaced / unconstrained_mark /
+      strong / emphasis / monospaced / mark / superscript / subscript /
+      ' ' / word / symbol
+    )+ <Expression>
+  end
+
+  rule double_curved_quotes
+    '"`' double_curved_quotes_content '`"' <DoubleCurvedQuoted>
+  end
+
+  rule double_curved_quotes_content
+    [^`"]+ <QuotedContent>
+  end
+
+  rule single_curved_quotes
+    '\'`' single_curved_quotes_content '`\'' <SingleCurvedQuoted>
+  end
+
+  rule single_curved_quotes_content
+    [^`\']+ <QuotedContent>
   end
 
   rule literal
@@ -52,8 +75,16 @@ grammar AsciidoctorGrammar
     (!constrained_mark_exception_start) '`' (!spaces) monospaced_content (!spaces) '`' (!constrained_mark_exception_end) <MonospacedQuoted>
   end
 
+  rule unconstrained_monospaced
+    '``' monospaced_content '``' <MonospacedQuoted>
+  end
+
   rule monospaced_content
-    [^`]+ <QuotedContent>
+    (monospaced_content_greedy)+ <QuotedContent>
+  end
+
+  rule monospaced_content_greedy
+    ( [^`] / '`' constrained_mark_exception )
   end
 
   rule mark

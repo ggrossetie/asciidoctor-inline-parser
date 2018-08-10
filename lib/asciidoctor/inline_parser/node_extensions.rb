@@ -60,6 +60,20 @@ module AsciidoctorGrammar
     end
   end
 
+  # Double curved
+  class DoubleCurvedQuoted < ::AsciidoctorGrammar::QuotedNode
+    def to_html
+      "“#{@comprehensive_elements.first.to_html}”"
+    end
+  end
+
+  # Single curved
+  class SingleCurvedQuoted < ::AsciidoctorGrammar::QuotedNode
+    def to_html
+      "‘#{@comprehensive_elements.first.to_html}’"
+    end
+  end
+
   # Literal
   class Literal < ::Treetop::Runtime::SyntaxNode
     def to_html
