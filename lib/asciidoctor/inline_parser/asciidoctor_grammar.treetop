@@ -5,7 +5,15 @@ grammar AsciidoctorGrammar
   end
 
   rule quoted
-    (escaped_quoted_symbol / unconstrained_strong / unconstrained_emphasis / unconstrained_mark / strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
+    (escaped_quoted_symbol / unconstrained_strong / unconstrained_emphasis / unconstrained_mark / literal / strong / emphasis / monospaced / mark / superscript / subscript / ' ' / word / symbol)+ <Expression>
+  end
+
+  rule literal
+    '+' (!spaces) literal_content (!spaces) '+' <Literal>
+  end
+
+  rule literal_content
+    [^+]+ <QuotedContent>
   end
 
   rule strong

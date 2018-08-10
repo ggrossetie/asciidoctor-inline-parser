@@ -39,21 +39,32 @@ module AsciidoctorGrammar
     end
   end
 
-  # Strong quoted
+  # Strong
   class StrongQuoted < ::AsciidoctorGrammar::QuotedNode
     def to_html
       "<strong>#{@comprehensive_elements.first.to_html}</strong>"
     end
   end
 
-  # Emphasis quoted
+  # Emphasis
   class EmphasisQuoted < ::AsciidoctorGrammar::QuotedNode
     def to_html
       "<em>#{@comprehensive_elements.first.to_html}</em>"
     end
   end
 
+  # Monospaced
   class MonospacedQuoted < ::AsciidoctorGrammar::QuotedNode
+    def to_html
+      "<code>#{@comprehensive_elements.first.to_html}</code>"
+    end
+  end
+
+  # Literal
+  class Literal < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      @comprehensive_elements.first.text_value
+    end
   end
 
   class MarkQuoted < ::AsciidoctorGrammar::QuotedNode
