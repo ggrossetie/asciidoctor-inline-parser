@@ -40,11 +40,11 @@ grammar AsciidoctorGrammar
   end
 
   rule strong
-    role? (!constrained_mark_exception_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_mark_exception_end) <StrongQuoted>
+    quoted_text_attrs? (!constrained_mark_exception_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_mark_exception_end) <StrongQuoted>
   end
 
   rule unconstrained_strong
-    role? '**' strong_content '**' <StrongQuoted>
+    quoted_text_attrs? '**' strong_content '**' <StrongQuoted>
   end
 
   rule strong_content
@@ -56,11 +56,11 @@ grammar AsciidoctorGrammar
   end
 
   rule emphasis
-    role? (!constrained_mark_exception_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_mark_exception_end) <EmphasisQuoted>
+    quoted_text_attrs? (!constrained_mark_exception_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_mark_exception_end) <EmphasisQuoted>
   end
 
   rule unconstrained_emphasis
-    role? '__' emphasis_content '__' <EmphasisQuoted>
+    quoted_text_attrs? '__' emphasis_content '__' <EmphasisQuoted>
   end
 
   rule emphasis_content
@@ -72,11 +72,11 @@ grammar AsciidoctorGrammar
   end
 
   rule monospaced
-    role? (!constrained_mark_exception_start) '`' (!spaces) monospaced_content (!spaces) '`' (!constrained_mark_exception_end) <MonospacedQuoted>
+    quoted_text_attrs? (!constrained_mark_exception_start) '`' (!spaces) monospaced_content (!spaces) '`' (!constrained_mark_exception_end) <MonospacedQuoted>
   end
 
   rule unconstrained_monospaced
-    role? '``' monospaced_content '``' <MonospacedQuoted>
+    quoted_text_attrs? '``' monospaced_content '``' <MonospacedQuoted>
   end
 
   rule monospaced_content
@@ -88,11 +88,11 @@ grammar AsciidoctorGrammar
   end
 
   rule mark
-    role? (!constrained_mark_exception_start) '#' (!spaces) mark_content (!spaces) '#' (!constrained_mark_exception_end) <MarkQuoted>
+    quoted_text_attrs? (!constrained_mark_exception_start) '#' (!spaces) mark_content (!spaces) '#' (!constrained_mark_exception_end) <MarkQuoted>
   end
 
   rule unconstrained_mark
-    role? '##' mark_content '##' <MarkQuoted>
+    quoted_text_attrs? '##' mark_content '##' <MarkQuoted>
   end
 
   rule mark_content
@@ -119,8 +119,20 @@ grammar AsciidoctorGrammar
     [^~]+ <QuotedContent>
   end
 
-  rule role
-    '[' '.'? role_identifier ']' <Role>
+  rule quoted_text_attrs
+    '[' quoted_text_attrs_content ']' <QuotedTextAttributes>
+  end
+
+  rule quoted_text_attrs_content
+    ( quoted_text_anchor / quoted_text_role )* <QuotedTextAttributesContent>
+  end
+
+  rule quoted_text_role
+    '.' role_identifier <QuotedTextRole>
+  end
+
+  rule quoted_text_anchor
+    '#' anchor_identifier <QuotedTextAnchor>
   end
 
   rule constrained_mark_exception_start
@@ -180,7 +192,15 @@ grammar AsciidoctorGrammar
   end
 
   rule role_identifier
-    [0-9a-zA-Z]+ <RoleIdentifier>
+    identifier+ <RoleIdentifier>
+  end
+
+  rule anchor_identifier
+    identifier+ <AnchorIdentifier>
+  end
+
+  rule identifier
+    [0-9a-zA-Z_\-]
   end
 
   rule number

@@ -18,11 +18,11 @@ describe 'inline parser' do
     nodes.size.must_equal 0
   end
   it 'should parse a single-line constrained marked string with role' do
-    ast = ::Asciidoctor::InlineParser.parse '[statement]#a few words#'
-    ast.text_value.must_equal '[statement]#a few words#'
+    ast = ::Asciidoctor::InlineParser.parse '[.statement]#a few words#'
+    ast.text_value.must_equal '[.statement]#a few words#'
     nodes = find_by (node_type_must_be 'Mark'), ast
     nodes.size.must_equal 1
-    nodes.first.role.must_equal 'statement'
+    nodes.first.roles.must_equal ['statement']
   end
   it 'should parse a constrained strong string containing an asterisk' do
     ast = ::Asciidoctor::InlineParser.parse '*bl*ck*-eye'
@@ -67,16 +67,16 @@ describe 'inline parser' do
     nodes.first.content.must_equal 'bl*ck'
   end
   it 'should parse a unconstrained strong chars with role' do
-    ast = ::Asciidoctor::InlineParser.parse 'Git[blue]**Hub**'
-    ast.text_value.must_equal 'Git[blue]**Hub**'
+    ast = ::Asciidoctor::InlineParser.parse 'Git[.blue]**Hub**'
+    ast.text_value.must_equal 'Git[.blue]**Hub**'
     nodes = find_by (node_type_must_be 'UnconstrainedStrong'), ast
     nodes.size.must_equal 1
-    nodes.first.role.must_equal 'blue'
+    nodes.first.roles.must_equal ['blue']
   end
   # REMIND: this is not the same result as AsciiDoc, though I don't understand why AsciiDoc gets what it gets
   it 'should parse a escaped unconstrained strong chars with role' do
-    ast = ::Asciidoctor::InlineParser.parse %(Git#{BACKSLASH}[blue]**Hub**)
-    ast.text_value.must_equal %(Git#{BACKSLASH}[blue]**Hub**)
+    ast = ::Asciidoctor::InlineParser.parse %(Git#{BACKSLASH}[.blue]**Hub**)
+    ast.text_value.must_equal %(Git#{BACKSLASH}[.blue]**Hub**)
     nodes = find_by (node_type_must_be 'UnconstrainedStrong'), ast
     nodes.size.must_equal 1
     nodes.first.text_value.must_equal '**Hub**'
@@ -127,11 +127,28 @@ describe 'inline parser' do
     nodes.first.content.must_equal "G\ni\nt\n"
   end
   it 'should parse a unconstrained emphasis chars with role' do
-    ast = ::Asciidoctor::InlineParser.parse '[gray]__Git__Hub'
-    ast.text_value.must_equal '[gray]__Git__Hub'
+    ast = ::Asciidoctor::InlineParser.parse '[.gray]__Git__Hub'
+    ast.text_value.must_equal '[.gray]__Git__Hub'
     nodes = find_by (node_type_must_be 'UnconstrainedEmphasis'), ast
     nodes.size.must_equal 1
-    nodes.first.role.must_equal 'gray'
+    nodes.first.roles.must_equal ['gray']
+    nodes.first.content.must_equal 'Git'
+  end
+  it 'should parse a unconstrained emphasis chars with roles' do
+    ast = ::Asciidoctor::InlineParser.parse '[.gray.small]__Git__Hub'
+    ast.text_value.must_equal '[.gray.small]__Git__Hub'
+    nodes = find_by (node_type_must_be 'UnconstrainedEmphasis'), ast
+    nodes.size.must_equal 1
+    nodes.first.roles.must_equal %w[gray small]
+    nodes.first.content.must_equal 'Git'
+  end
+  it 'should parse a unconstrained emphasis chars with roles and id' do
+    ast = ::Asciidoctor::InlineParser.parse '[#git.gray.small]__Git__Hub'
+    ast.text_value.must_equal '[#git.gray.small]__Git__Hub'
+    nodes = find_by (node_type_must_be 'UnconstrainedEmphasis'), ast
+    nodes.size.must_equal 1
+    nodes.first.roles.must_equal %w[gray small]
+    nodes.first.id.must_equal 'git'
     nodes.first.content.must_equal 'Git'
   end
   it 'should parse a escaped unconstrained emphasis chars with role' do

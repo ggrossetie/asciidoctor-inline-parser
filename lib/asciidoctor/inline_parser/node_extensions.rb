@@ -38,8 +38,14 @@ module AsciidoctorGrammar
       @elements.any? { |el| el.class.ancestors.include? ::AsciidoctorGrammar::QuotedNode }
     end
 
-    def role
-      @elements.select { |el| el.instance_of? ::AsciidoctorGrammar::Role }.first.name
+    def roles
+      attributes_node = @elements.select { |el| el.instance_of? ::AsciidoctorGrammar::QuotedTextAttributes }.first
+      attributes_node.roles if attributes_node
+    end
+
+    def id
+      attributes_node = @elements.select { |el| el.instance_of? ::AsciidoctorGrammar::QuotedTextAttributes }.first
+      attributes_node.id if attributes_node
     end
   end
 
@@ -89,14 +95,55 @@ module AsciidoctorGrammar
   class MarkQuoted < ::AsciidoctorGrammar::QuotedNode
   end
 
-  # Role
-  class Role < ::Treetop::Runtime::SyntaxNode
+  # Quoted text anchor (id)
+  class QuotedTextRole < ::AsciidoctorGrammar::QuotedNode
     def name
-      @elements.select { |el| el.instance_of? ::AsciidoctorGrammar::RoleIdentifier }.first.text_value
+      role_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::RoleIdentifier }.first
+      role_node.text_value if role_node
+    end
+  end
+
+  # Quoted text role
+  class QuotedTextAnchor < ::AsciidoctorGrammar::QuotedNode
+    def name
+      anchor_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::AnchorIdentifier }.first
+      anchor_node.text_value if anchor_node
+    end
+  end
+
+  # Quoted text attributes: anchor and roles
+  class QuotedTextAttributes < ::Treetop::Runtime::SyntaxNode
+    def roles
+      content_node = @comprehensive_elements.select do |el|
+        el.instance_of? ::AsciidoctorGrammar::QuotedTextAttributesContent
+      end.first
+      content_node.roles if content_node
+    end
+
+    def id
+      content_node = @comprehensive_elements.select do |el|
+        el.instance_of? ::AsciidoctorGrammar::QuotedTextAttributesContent
+      end.first
+      content_node.id if content_node
+    end
+  end
+
+  # Quoted text attributes content: anchor and roles
+  class QuotedTextAttributesContent < ::Treetop::Runtime::SyntaxNode
+    def roles
+      @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::QuotedTextRole }.map(&:name).compact
+    end
+
+    def id
+      anchor_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::QuotedTextAnchor }.first
+      anchor_node.name if anchor_node
     end
   end
 
   class RoleIdentifier < ::Treetop::Runtime::SyntaxNode
+  end
+
+  class AnchorIdentifier < ::Treetop::Runtime::SyntaxNode
   end
 
   class SuperscriptQuoted < ::AsciidoctorGrammar::QuotedNode
