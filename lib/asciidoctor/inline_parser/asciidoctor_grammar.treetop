@@ -40,7 +40,7 @@ grammar AsciidoctorGrammar
   end
 
   rule strong
-    quoted_text_attrs? (!constrained_mark_exception_start) '*' (!spaces) strong_content (!spaces) '*' (!constrained_mark_exception_end) <StrongQuoted>
+    quoted_text_attrs? '*' (!spaces) strong_content (!spaces) '*' (!constrained_mark_exception_end) <StrongQuoted>
   end
 
   rule unconstrained_strong
@@ -56,7 +56,7 @@ grammar AsciidoctorGrammar
   end
 
   rule emphasis
-    quoted_text_attrs? (!constrained_mark_exception_start) '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_mark_exception_end) <EmphasisQuoted>
+    quoted_text_attrs? '_' (!spaces) emphasis_content (!spaces) '_' (!constrained_mark_exception_end) <EmphasisQuoted>
   end
 
   rule unconstrained_emphasis
@@ -72,7 +72,7 @@ grammar AsciidoctorGrammar
   end
 
   rule monospaced
-    quoted_text_attrs? (!constrained_mark_exception_start) '`' (!spaces) monospaced_content (!spaces) '`' (!constrained_mark_exception_end) <MonospacedQuoted>
+    quoted_text_attrs? '`' (!spaces) monospaced_content (!spaces) '`' (!constrained_mark_exception_end) <MonospacedQuoted>
   end
 
   rule unconstrained_monospaced
@@ -88,7 +88,7 @@ grammar AsciidoctorGrammar
   end
 
   rule mark
-    quoted_text_attrs? (!constrained_mark_exception_start) '#' (!spaces) mark_content (!spaces) '#' (!constrained_mark_exception_end) <MarkQuoted>
+    quoted_text_attrs? '#' (!spaces) mark_content (!spaces) '#' (!constrained_mark_exception_end) <MarkQuoted>
   end
 
   rule unconstrained_mark
@@ -135,16 +135,12 @@ grammar AsciidoctorGrammar
     '#' anchor_identifier <QuotedTextAnchor>
   end
 
-  rule constrained_mark_exception_start
-    ( constrained_mark_exception / ':' / ';' / '}' )
-  end
-
   rule constrained_mark_exception_end
     ( constrained_mark_exception )
   end
 
   rule constrained_mark_exception
-    [a-zA-Z0-9]
+    [a-zA-Z]
   end
 
   rule escaped_quoted_symbol
@@ -156,31 +152,15 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol
-    ( symbol_constrained / symbol_basic / symbol_unconstrained / quoted_symbol )
+    ( symbol_basic / quoted_symbol )
   end
 
   rule symbol_basic
-    [&\-:;=,"'\.!\\{}\]\[] # FIXME: should include all "symbols"
-  end
-
-  rule symbol_constrained
-    [:;}]+ constrained_quoted_symbol constrained_mark_exception
-  end
-
-  rule symbol_unconstrained
-    [:;}]+ (!unconstrained_quoted_symbol)
+    [&\-:;=,"'\.!\\{}\]\[]
   end
 
   rule quoted_symbol
     [_*#`^~]+
-  end
-
-  rule constrained_quoted_symbol
-    ( '_' / '*' / '#' / '`')
-  end
-
-  rule unconstrained_quoted_symbol
-    ( '__' / '**' / '##' / '``')
   end
 
   rule spaces
