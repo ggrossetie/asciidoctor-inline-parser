@@ -42,15 +42,6 @@ module AsciidoctorGrammar
 
   # Quoted content
   class QuotedContent < ::Treetop::Runtime::SyntaxNode
-    include ::Asciidoctor::Substitutors
-
-    attr_reader :document
-
-    def initialize input, interval, elements
-      @document = ::Asciidoctor::Document.new # FIXME: use the current Asciidoctor Document
-      super input, interval, elements
-    end
-
     def to_html
       text_value
     end
