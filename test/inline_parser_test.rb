@@ -159,28 +159,28 @@ describe 'inline parser' do
     nodes.first.content.must_equal 'Git'
   end
   it 'should parse a constrained monospaced code snippet' do
-    ast = ::Asciidoctor::InlineParser.parse('`var i = \'abcd\';`')
+    ast = ::Asciidoctor::InlineParser.parse '`var i = \'abcd\';`'
     ast.text_value.must_equal '`var i = \'abcd\';`'
     nodes = find_by (node_type_must_be 'Monospaced'), ast
     nodes.size.must_equal 1
     nodes.first.text_value.must_equal '`var i = \'abcd\';`'
   end
   it 'should parse a constrained superscript single letter' do
-    ast = ::Asciidoctor::InlineParser.parse('E = mc^2^')
+    ast = ::Asciidoctor::InlineParser.parse 'E = mc^2^'
     ast.text_value.must_equal 'E = mc^2^'
     nodes = find_by (node_type_must_be 'Superscript'), ast
     nodes.size.must_equal 1
     nodes.first.text_value.must_equal '^2^'
   end
   it 'should parse a constrained subscript single letter' do
-    ast = ::Asciidoctor::InlineParser.parse('~a~')
+    ast = ::Asciidoctor::InlineParser.parse '~a~'
     ast.text_value.must_equal '~a~'
     nodes = find_by (node_type_must_be 'Subscript'), ast
     nodes.size.must_equal 1
     nodes.first.text_value.must_equal '~a~'
   end
   it 'should parse a constrained monospaced string that contains /* and */' do
-    ast = ::Asciidoctor::InlineParser.parse('Use `/*` and `*/` for multiline comments.')
+    ast = ::Asciidoctor::InlineParser.parse 'Use `/*` and `*/` for multiline comments.'
     ast.text_value.must_equal 'Use `/*` and `*/` for multiline comments.'
     nodes = find_by (node_type_must_be 'Monospaced'), ast
     nodes.size.must_equal 2
@@ -188,7 +188,7 @@ describe 'inline parser' do
     nodes[1].text_value.must_equal '`*/`'
   end
   it 'should parse a nested quoted string (emphasis text inside a bold text)' do
-    ast = ::Asciidoctor::InlineParser.parse('The next *few words are _really_ important!*')
+    ast = ::Asciidoctor::InlineParser.parse 'The next *few words are _really_ important!*'
     ast.text_value.must_equal 'The next *few words are _really_ important!*'
     strong_nodes = find_by (node_type_must_be 'Strong'), ast
     strong_nodes.size.must_equal 1
@@ -197,7 +197,7 @@ describe 'inline parser' do
     emphasis_nodes.size.must_equal 1
   end
   it 'should parse a constrained emphasis string that contains numbers and the percent symbol' do
-    ast = ::Asciidoctor::InlineParser.parse('The parser is working _99%_ of the time')
+    ast = ::Asciidoctor::InlineParser.parse 'The parser is working _99%_ of the time'
     ast.text_value.must_equal 'The parser is working _99%_ of the time'
     nodes = find_by (node_type_must_be 'Emphasis'), ast
     nodes.size.must_equal 1
@@ -205,7 +205,7 @@ describe 'inline parser' do
     nodes.first.content.must_equal '99%'
   end
   it 'should parse a constrained strong string that contains an underscore symbol' do
-    ast = ::Asciidoctor::InlineParser.parse('*_id* word_')
+    ast = ::Asciidoctor::InlineParser.parse '*_id* word_'
     ast.text_value.must_equal '*_id* word_'
     emphasis_nodes = find_by (node_type_must_be 'Emphasis'), ast
     emphasis_nodes.size.must_equal 0
@@ -214,13 +214,13 @@ describe 'inline parser' do
     strong_nodes.first.content.must_equal '_id'
   end
   it 'should parse an escaped constrained strong string' do
-    ast = ::Asciidoctor::InlineParser.parse('Escaped star symbol will not produce \*bold*.')
+    ast = ::Asciidoctor::InlineParser.parse 'Escaped star symbol will not produce \*bold*.'
     ast.text_value.must_equal 'Escaped star symbol will not produce \*bold*.'
     nodes = find_by (node_type_must_be 'Strong'), ast
     nodes.size.must_equal 0
   end
   it 'should parse a deep nested quoted string' do
-    ast = ::Asciidoctor::InlineParser.parse('*Deep _nested `#quoted#` ^text^_*')
+    ast = ::Asciidoctor::InlineParser.parse '*Deep _nested `#quoted#` ^text^_*'
     ast.text_value.must_equal '*Deep _nested `#quoted#` ^text^_*'
     strong_nodes = find_by (node_type_must_be 'Strong'), ast
     strong_nodes.size.must_equal 1
@@ -239,11 +239,15 @@ describe 'inline parser' do
     superscript_nodes.first.content.must_equal 'text'
   end
   it 'should parse an unconstrained strong string with a trailing semi-colon' do
-    ast = ::Asciidoctor::InlineParser.parse('&copy;__the authors__')
+    ast = ::Asciidoctor::InlineParser.parse '&copy;__the authors__'
     ast.text_value.must_equal '&copy;__the authors__'
     nodes = find_by (node_type_must_be 'UnconstrainedEmphasis'), ast
     nodes.size.must_equal 1
     nodes.first.text_value.must_equal '__the authors__'
     nodes.first.content.must_equal 'the authors'
+  end
+  it 'should parse a constrained monospaced code surrounded by parenthesis' do
+    ast = ::Asciidoctor::InlineParser.parse 'Strong Importance Element (`<strong>`)'
+    ast.text_value.must_equal 'Strong Importance Element (`<strong>`)'
   end
 end

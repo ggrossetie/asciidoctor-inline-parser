@@ -11,20 +11,48 @@ module AsciidoctorGrammar
 
   # Expression
   class Expression < ::Treetop::Runtime::SyntaxNode
+    include ::Asciidoctor::Substitutors
+    attr_reader :document
+
+    def initialize input, interval, elements
+      @document = ::Asciidoctor::Document.new # FIXME: use the current Asciidoctor Document
+      super input, interval, elements
+    end
+
     def to_html
-      raw_text = text_value
-      return text_value if @comprehensive_elements.empty?
-      @comprehensive_elements.reverse_each do |el|
-        raw_text[el.interval] = el.to_html unless el.instance_of? ::Treetop::Runtime::SyntaxNode
+      text = text_value
+      if @comprehensive_elements.empty?
+        apply_sub text
+      else
+        @comprehensive_elements.reverse_each do |el|
+          text[el.interval] = el.to_html unless el.instance_of? ::Treetop::Runtime::SyntaxNode
+        end
+        text
       end
-      raw_text
+    end
+
+    private
+
+    def apply_sub text
+      text = sub_specialchars text
+      text = sub_attributes text
+      sub_replacements text
     end
   end
 
   # Quoted content
   class QuotedContent < ::Treetop::Runtime::SyntaxNode
+    include ::Asciidoctor::Substitutors
+
+    attr_reader :document
+
+    def initialize input, interval, elements
+      @document = ::Asciidoctor::Document.new # FIXME: use the current Asciidoctor Document
+      super input, interval, elements
+    end
+
     def to_html
-      @comprehensive_elements.first.to_html
+      text_value
     end
   end
 

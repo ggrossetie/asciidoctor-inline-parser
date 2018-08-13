@@ -156,7 +156,7 @@ grammar AsciidoctorGrammar
   end
 
   rule symbol_basic
-    [&\-:;=,"'\.!\\{}\]\[]
+    [&\-:;=,"'\.!\\{}\]\[<>/()]
   end
 
   rule quoted_symbol
