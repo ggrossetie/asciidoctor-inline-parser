@@ -159,6 +159,101 @@ module AsciidoctorGrammar
     end
   end
 
+  # Link
+  class Link < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      %(<a href="#{target}" class="#{roles.join(',')}">#{text}</a>)
+    end
+
+    def target
+      scheme + path
+    end
+
+    def scheme
+      scheme_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::LinkScheme }.first
+      scheme_node.text_value if scheme_node
+    end
+
+    def path
+      path_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::LinkPath }.first
+      path_node.text_value if path_node
+    end
+
+    def text
+      attrs_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::LinkAttributes }.first
+      return attrs_node.text if attrs_node
+      target
+    end
+
+    def roles
+      attrs_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::LinkAttributes }.first
+      return ['bare'] if attrs_node.nil? || attrs_node.roles.empty?
+      attrs_node.roles
+    end
+  end
+
+  # Link scheme
+  class LinkScheme < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      text_value
+    end
+  end
+
+  # Link path
+  class LinkPath < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      text_value
+    end
+  end
+
+  # Link attributes (content)
+  class LinkAttributesContent < ::Treetop::Runtime::SyntaxNode
+    def roles
+      @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::LinkRole }.map(&:name).compact
+    end
+
+    def text
+      text_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::LinkText }.first
+      text_node.name if text_node
+    end
+  end
+
+  # Link attributes
+  class LinkAttributes < ::Treetop::Runtime::SyntaxNode
+    def text
+      attrs_node = @comprehensive_elements.select { |el| link_attributes_content? el }.first
+      attrs_node.text if attrs_node
+    end
+
+    def roles
+      attrs_node = @comprehensive_elements.select { |el| link_attributes_content? el }.first
+      attrs_node.roles if attrs_node
+    end
+
+    private
+
+    def link_attributes_content? node
+      node.instance_of? ::AsciidoctorGrammar::LinkAttributesContent
+    end
+  end
+
+  # Link role
+  class LinkRole < ::Treetop::Runtime::SyntaxNode
+    def name
+      text_value
+    end
+  end
+
+  # Link text
+  class LinkText < ::Treetop::Runtime::SyntaxNode
+    def name
+      text_value
+    end
+  end
+
+  class MacroAttributes < ::Treetop::Runtime::SyntaxNode
+  end
+
   class RoleIdentifier < ::Treetop::Runtime::SyntaxNode
   end
 

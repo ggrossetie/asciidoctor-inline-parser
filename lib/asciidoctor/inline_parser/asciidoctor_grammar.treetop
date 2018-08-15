@@ -9,10 +9,58 @@ grammar AsciidoctorGrammar
       escaped_quoted_symbol / escaped_role_symbol /
       double_curved_quotes / single_curved_quotes /
       literal /
+      explicit_link / implicit_link /
       unconstrained_strong / unconstrained_emphasis / unconstrained_monospaced / unconstrained_mark /
       strong / emphasis / monospaced / mark / superscript / subscript /
       ' ' / word / symbol
     )+ <Expression>
+  end
+
+  rule explicit_link
+    'link:' implicit_link
+  end
+
+  rule implicit_link
+    uri_scheme uri_path link_attrs? <Link>
+  end
+
+  rule uri_scheme
+    ( 'https' / 'http' / 'file' / 'ftp' / 'irc' ) '://' <LinkScheme>
+  end
+
+  rule uri_path
+    ('.' (!' ' .) / [^ \.\[])+ <LinkPath>
+  end
+
+  rule link_attrs
+    '[' link_attrs_content ']' <LinkAttributes>
+  end
+
+  rule link_attrs_content
+    (
+      link_attr_text_unprotected / link_attr_text_protected /
+      link_attr_role_unprotected / link_attr_role_protected
+    )+ <LinkAttributesContent>
+  end
+
+  rule link_attr_text_unprotected
+    [^,\]]+ <LinkText>
+  end
+
+  rule link_attr_text_protected
+    '"' link_text_protected '"'
+  end
+
+  rule link_text_protected
+    [^"]+ <LinkText>
+  end
+
+  rule link_attr_role_unprotected
+    'role=' [^,\]]+ <LinkRole>
+  end
+
+  rule link_attr_role_protected
+    'role="' [^"]+ '"' <LinkRole>
   end
 
   rule double_curved_quotes
