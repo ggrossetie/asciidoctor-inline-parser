@@ -38,8 +38,10 @@ grammar AsciidoctorGrammar
 
   rule link_attrs_content
     (
-      link_attr_text_unprotected / link_attr_text_protected /
-      link_attr_role_unprotected / link_attr_role_protected
+      link_attr_role_protected / link_attr_role_unprotected /
+      link_attr_window_protected /  link_attr_text_protected /
+      ',' / ' ' /
+      link_attr_text_unprotected / link_attr_window_unprotected
     )+ <LinkAttributesContent>
   end
 
@@ -48,7 +50,7 @@ grammar AsciidoctorGrammar
   end
 
   rule link_attr_text_protected
-    '"' link_text_protected '"'
+    '"' link_text_protected '"' <LinkTextProtected>
   end
 
   rule link_text_protected
@@ -61,6 +63,14 @@ grammar AsciidoctorGrammar
 
   rule link_attr_role_protected
     'role="' [^"]+ '"' <LinkRole>
+  end
+
+  rule link_attr_window_unprotected
+    'window=' [^,\]]+ <LinkWindow>
+  end
+
+  rule link_attr_window_protected
+    'window="' [^"]+ '"' <LinkWindow>
   end
 
   rule double_curved_quotes
