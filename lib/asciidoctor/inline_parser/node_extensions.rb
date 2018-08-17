@@ -266,14 +266,14 @@ module AsciidoctorGrammar
   # Link role
   class LinkRole < ::Treetop::Runtime::SyntaxNode
     def name
-      @elements[1].text_value
+      @elements[1].text_value # [0]: role=" [1]: name
     end
   end
 
   # Link window
   class LinkWindow < ::Treetop::Runtime::SyntaxNode
     def name
-      @elements[1].text_value
+      @elements[1].text_value # [0]: window=" [1]: name
     end
   end
 
@@ -287,7 +287,7 @@ module AsciidoctorGrammar
   # Link text protected with double quotes
   class LinkTextProtected < ::Treetop::Runtime::SyntaxNode
     def name
-      @elements[1].text_value
+      @elements[1].text_value # [0]: " [1]: name
     end
   end
 
