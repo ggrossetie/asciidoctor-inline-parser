@@ -1,0 +1,33 @@
+grammar AsciidoctorPassthroughGrammar
+
+  rule escaped_passthrough_inline_macro
+    '\\' passthrough_inline_macro <EscapedPassthroughInlineMacro>
+  end
+
+  rule passthrough_inline_macro
+    'pass:' passthrough_inline_macro_subs '[' passthrough_inline_macro_content ']' <PassthroughInlineMacro>
+  end
+
+  rule passthrough_inline_macro_subs
+    ( ',' / passthrough_inline_macro_sub )+ <PassthroughInlineMacroSubs>
+  end
+
+  rule passthrough_inline_macro_sub
+    (
+      'normal' / 'none' / 'specialcharacters' / 'specialchars' / 'quotes' / 'attributes' /  'replacements' / 'macros' / 'post_replacements' / 'verbatim' /
+      'c' / 'q' / 'a' / 'r' / 'm' / 'p'
+    )+ <PassthroughInlineMacroSub>
+  end
+
+  rule passthrough_inline_macro_content
+    ( '\]' / [^\]] )* <PassthroughInlineMacroContent>
+  end
+
+  rule passthrough_triple_plus
+    '+++' passthrough_triple_plus_content '+++' <PassthroughTriplePlus>
+  end
+
+  rule passthrough_triple_plus_content
+    [^+]+ <PassthroughTriplePlusContent>
+  end
+end

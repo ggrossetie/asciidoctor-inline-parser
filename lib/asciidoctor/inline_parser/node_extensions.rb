@@ -1,3 +1,5 @@
+require './lib/asciidoctor/inline_parser/subs'
+
 module AsciidoctorGrammar
   # Text
   class Text < ::Treetop::Runtime::SyntaxNode
@@ -11,7 +13,6 @@ module AsciidoctorGrammar
 
   # Expression
   class Expression < ::Treetop::Runtime::SyntaxNode
-    include ::Asciidoctor::Substitutors
     attr_reader :document
 
     def initialize input, interval, elements
@@ -34,9 +35,10 @@ module AsciidoctorGrammar
     private
 
     def apply_sub text
-      text = sub_specialchars text
-      text = sub_attributes text
-      sub_replacements text
+      # TODO: Implement all the substitutions
+      text = ::Asciidoctor::Subs.sub_specialchars text
+      text = ::Asciidoctor::Subs.sub_attributes text, @document
+      ::Asciidoctor::Subs.sub_replacements text
     end
   end
 
@@ -159,6 +161,23 @@ module AsciidoctorGrammar
     end
   end
 
+  class MacroAttributes < ::Treetop::Runtime::SyntaxNode
+  end
+
+  class RoleIdentifier < ::Treetop::Runtime::SyntaxNode
+  end
+
+  class AnchorIdentifier < ::Treetop::Runtime::SyntaxNode
+  end
+
+  class SuperscriptQuoted < ::AsciidoctorGrammar::QuotedNode
+  end
+
+  class SubscriptQuoted < ::AsciidoctorGrammar::QuotedNode
+  end
+end
+
+module AsciidoctorLinkGrammar
   # Link
   class Link < ::Treetop::Runtime::SyntaxNode
     BLANK_SHORTHAND = '^'.freeze
@@ -290,19 +309,81 @@ module AsciidoctorGrammar
       @elements[1].text_value # [0]: " [1]: name
     end
   end
+end
 
-  class MacroAttributes < ::Treetop::Runtime::SyntaxNode
+module AsciidoctorPassthroughGrammar
+  # Escaped passthrough inline macro
+  class EscapedPassthroughInlineMacro < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      text_value.gsub '\pass:', 'pass:'
+    end
   end
 
-  class RoleIdentifier < ::Treetop::Runtime::SyntaxNode
-  end
+  # Passthrough inline macro
+  class PassthroughInlineMacro < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      text = content
+      apply_subs text
+    end
 
-  class AnchorIdentifier < ::Treetop::Runtime::SyntaxNode
-  end
+    def content
+      content_node = @comprehensive_elements.select { |el| passthrough_inline_macro_content? el }.first
+      content_node.text_value if content_node
+    end
 
-  class SuperscriptQuoted < ::AsciidoctorGrammar::QuotedNode
-  end
+    def subs
+      subs_node = @comprehensive_elements.select { |el| passthrough_inline_macro_subs? el }.first
+      subs_node.subs if subs_node
+    end
 
-  class SubscriptQuoted < ::AsciidoctorGrammar::QuotedNode
+    private
+
+    def apply_subs text
+      # TODO: Implement all the substitutions
+      text = text.gsub '\]', ']'
+      if (subs.include? 'verbatim') || (subs.include? 'specialcharacters') || (subs.include? 'specialchars')
+        text = ::Asciidoctor::Subs.sub_specialchars text
+      end
+      text
+    end
+
+    def passthrough_inline_macro_content? node
+      node.instance_of? ::AsciidoctorGrammar::PassthroughInlineMacroContent
+    end
+
+    def passthrough_inline_macro_subs? node
+      node.instance_of? ::AsciidoctorGrammar::PassthroughInlineMacroSubs
+    end
+  end
+  # Passthrough inline macro subs
+  class PassthroughInlineMacroSubs < ::Treetop::Runtime::SyntaxNode
+    def subs
+      @comprehensive_elements
+        .select { |el| el.instance_of? ::AsciidoctorGrammar::PassthroughInlineMacroSub }
+        .map(&:text_value)
+    end
+  end
+  class PassthroughInlineMacroSub < ::Treetop::Runtime::SyntaxNode
+  end
+  class PassthroughInlineMacroContent < ::Treetop::Runtime::SyntaxNode
+  end
+  # Passthrough using +++ (triple plus)
+  class PassthroughTriplePlus < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      content
+    end
+
+    def content
+      content_node = @comprehensive_elements.select { |el| passthrough_triple_plus_content? el }.first
+      content_node.text_value if content_node
+    end
+
+    private
+
+    def passthrough_triple_plus_content? node
+      node.instance_of? ::AsciidoctorGrammar::PassthroughTriplePlusContent
+    end
+  end
+  class PassthroughTriplePlusContent < ::Treetop::Runtime::SyntaxNode
   end
 end

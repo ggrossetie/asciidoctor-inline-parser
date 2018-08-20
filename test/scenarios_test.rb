@@ -6,7 +6,7 @@ describe 'scenario' do
   let(:doc) { ::Asciidoctor::InlineParser.parse input }
 
   Dir.chdir File.join __dir__, 'scenarios' do
-    (Dir.glob '**/*.adoc').each do |input_filename|
+    (Dir.glob '**/inline_triple_plus.adoc').each do |input_filename|
       input_stem = input_filename.slice 0, input_filename.length - 5
       scenario_name = input_stem.gsub '/', '::'
       input_filename = File.absolute_path input_filename
