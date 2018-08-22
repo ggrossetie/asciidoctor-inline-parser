@@ -314,34 +314,121 @@ end
 module AsciidoctorEmailGrammar
   # Email macro
   class EmailMacro < ::Treetop::Runtime::SyntaxNode
+    SPACE = ' '.freeze
+
     def to_html
-      %(<a href="mailto:#{email_address}">#{email_address}</a>)
+      %(<a href="mailto:#{link}">#{name}</a>)
     end
 
-    def email_address
+    def name
+      attrs_node = @comprehensive_elements.select { |el| email_attrs? el }.first
+      return attrs_node.name if attrs_node && attrs_node.name
+      email
+    end
+
+    def subject
+      attrs_node = @comprehensive_elements.select { |el| email_attrs? el }.first
+      attrs_node.subject if attrs_node
+    end
+
+    def body
+      attrs_node = @comprehensive_elements.select { |el| email_attrs? el }.first
+      attrs_node.body if attrs_node
+    end
+
+    def link
+      subject_text = %(?subject=#{uri_encode_spaces subject}) if subject
+      body_text = %(&amp;body=#{uri_encode_spaces body}) if body
+      %(#{email}#{subject_text}#{body_text})
+    end
+
+    def email
       email_node = @comprehensive_elements.select { |el| email? el }.first
-      email_node.text_value if email_node
+      email_node.email if email_node
     end
 
     private
 
+    def uri_encode_spaces str
+      if str.include? SPACE
+        str.gsub SPACE, '%20'
+      else
+        str
+      end
+    end
+
     def email? node
       node.instance_of? ::AsciidoctorEmailGrammar::Email
+    end
+
+    def email_attrs? node
+      node.instance_of? ::AsciidoctorEmailGrammar::EmailAttributes
     end
   end
   # Email
   class Email < ::Treetop::Runtime::SyntaxNode
     def to_html
-      %(<a href="mailto:#{email_address}">#{email_address}</a>)
+      %(<a href="mailto:#{email}">#{text}</a>)
     end
 
-    def email_address
+    def text
+      email
+    end
+
+    def email
       text_value
     end
   end
+  # Email attributes
   class EmailAttributes < ::Treetop::Runtime::SyntaxNode
+    def name
+      attrs_node = @comprehensive_elements.select { |el| email_attrs_content? el }.first
+      attrs_node.name if attrs_node
+    end
+
+    def subject
+      attrs_node = @comprehensive_elements.select { |el| email_attrs_content? el }.first
+      attrs_node.subject if attrs_node
+    end
+
+    def body
+      attrs_node = @comprehensive_elements.select { |el| email_attrs_content? el }.first
+      attrs_node.body if attrs_node
+    end
+
+    private
+
+    def email_attrs_content? node
+      node.instance_of? ::AsciidoctorEmailGrammar::EmailAttributesContent
+    end
   end
+  # Email attributes content
   class EmailAttributesContent < ::Treetop::Runtime::SyntaxNode
+    def name
+      attrs.first.text_value if attrs && !attrs.empty?
+    end
+
+    def subject
+      attrs[1].text_value if attrs && attrs.length > 1
+    end
+
+    def body
+      attrs[2].text_value if attrs && attrs.length > 2
+    end
+
+    def attrs
+      @comprehensive_elements.select { |el| email_text? el }
+    end
+
+    private
+
+    def email_text? node
+      node.instance_of? ::AsciidoctorEmailGrammar::EmailText
+    end
+  end
+  class EmailTextProtected < ::Treetop::Runtime::SyntaxNode
+  end
+  class EmailText < ::Treetop::Runtime::SyntaxNode
   end
   # Escaped email
   class EscapedEmail < ::Treetop::Runtime::SyntaxNode

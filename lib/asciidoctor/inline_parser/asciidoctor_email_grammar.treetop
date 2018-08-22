@@ -33,6 +33,22 @@ grammar AsciidoctorEmailGrammar
   end
 
   rule email_attrs_content
-    [^\]]* <EmailAttributesContent>
+    (
+      email_attr_text_protected /
+      ',' / ' ' /
+      email_attr_text_unprotected
+    )* <EmailAttributesContent>
+  end
+
+  rule email_attr_text_unprotected
+    [^,\]]+ <EmailText>
+  end
+
+  rule email_attr_text_protected
+    '"' email_text_protected '"' <EmailTextProtected>
+  end
+
+  rule email_text_protected
+    [^"]+ <EmailText>
   end
 end
