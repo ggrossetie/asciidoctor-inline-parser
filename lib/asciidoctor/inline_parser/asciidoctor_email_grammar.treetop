@@ -1,0 +1,38 @@
+grammar AsciidoctorEmailGrammar
+
+  rule escaped_implicit_email
+    '\\' implicit_email <EscapedEmail>
+  end
+
+  rule escaped_explicit_email
+    '\\' explicit_email <EscapedEmail>
+  end
+
+  rule explicit_email
+    'mailto:' implicit_email email_attrs <EmailMacro> # TODO: Should we use a greedier rule since we are using an explicit link ?
+  end
+
+  rule implicit_email
+    email_name '@' email_domain <Email>
+  end
+
+  rule email_name
+    ( word / [\.%+\-] )+
+  end
+
+  rule email_domain
+    word ( email_tld / word )+
+  end
+
+  rule email_tld
+    '.' alpha 1..4
+  end
+
+  rule email_attrs
+    '[' email_attrs_content ']' <EmailAttributes>
+  end
+
+  rule email_attrs_content
+    [^\]]* <EmailAttributesContent>
+  end
+end

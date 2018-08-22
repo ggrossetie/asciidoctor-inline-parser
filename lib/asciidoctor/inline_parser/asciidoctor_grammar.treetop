@@ -1,9 +1,11 @@
 require './lib/asciidoctor/inline_parser/asciidoctor_link_grammar'
+require './lib/asciidoctor/inline_parser/asciidoctor_email_grammar'
 require './lib/asciidoctor/inline_parser/asciidoctor_passthrough_grammar'
 
 grammar AsciidoctorGrammar
 
   include AsciidoctorLinkGrammar
+  include AsciidoctorEmailGrammar
   include AsciidoctorPassthroughGrammar
 
   rule text
@@ -12,11 +14,12 @@ grammar AsciidoctorGrammar
 
   rule quoted
     (
-      escaped_passthrough_inline_macro / escaped_quoted_symbol / escaped_role_symbol /
+      escaped_passthrough_inline_macro / escaped_quoted_symbol / escaped_role_symbol / escaped_explicit_email / escaped_implicit_email /
       passthrough_inline_macro / passthrough_triple_plus /
       double_curved_quotes / single_curved_quotes /
       literal /
       explicit_link / implicit_link /
+      explicit_email / implicit_email /
       unconstrained_strong / unconstrained_emphasis / unconstrained_monospaced / unconstrained_mark /
       strong / emphasis / monospaced / mark / superscript / subscript /
       ' ' / word / symbol
@@ -183,15 +186,23 @@ grammar AsciidoctorGrammar
     [0-9a-zA-Z_\-]
   end
 
-  rule spaces
-    [ ]+
-  end
-
   rule word
-    [0-9a-zA-Z]+ # FIXME: should include all unicode characters ?
+    alnum
   end
 
   rule number
     [0-9]+
+  end
+
+  rule alpha
+    [a-zA-Z]+ # FIXME: should include all unicode characters ?
+  end
+
+  rule alnum
+    ( number / alpha )
+  end
+
+  rule spaces
+    [ ]+
   end
 end

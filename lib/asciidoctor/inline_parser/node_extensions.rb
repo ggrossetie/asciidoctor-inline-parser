@@ -311,6 +311,48 @@ module AsciidoctorLinkGrammar
   end
 end
 
+module AsciidoctorEmailGrammar
+  # Email macro
+  class EmailMacro < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      %(<a href="mailto:#{email_address}">#{email_address}</a>)
+    end
+
+    def email_address
+      email_node = @comprehensive_elements.select { |el| email? el }.first
+      email_node.text_value if email_node
+    end
+
+    private
+
+    def email? node
+      node.instance_of? ::AsciidoctorEmailGrammar::Email
+    end
+  end
+  # Email
+  class Email < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      %(<a href="mailto:#{email_address}">#{email_address}</a>)
+    end
+
+    def email_address
+      text_value
+    end
+  end
+  class EmailAttributes < ::Treetop::Runtime::SyntaxNode
+  end
+  class EmailAttributesContent < ::Treetop::Runtime::SyntaxNode
+  end
+  # Escaped email
+  class EscapedEmail < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      text = text_value
+      text[0] = ''
+      text
+    end
+  end
+end
+
 module AsciidoctorPassthroughGrammar
   # Escaped passthrough inline macro
   class EscapedPassthroughInlineMacro < ::Treetop::Runtime::SyntaxNode
