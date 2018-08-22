@@ -1,0 +1,1 @@
+IRC (Internet Relay Chat) is a chat service used in Fedora community: irc://irc.freenode.org/#fedora
