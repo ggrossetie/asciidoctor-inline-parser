@@ -1,0 +1,51 @@
+grammar AsciidoctorImageGrammar
+
+  rule image
+    'image:' image_target image_attrs <Image>
+  end
+
+  rule image_target
+    [^\[]+ <ImageTarget>
+  end
+
+  rule image_attrs
+    '[' image_attrs_content ']' <ImageAttributes>
+  end
+
+  rule image_attrs_content
+    (
+      image_attr_text_protected /
+      ',' / ' ' /
+      image_named_attr /
+      image_attr_text_unprotected
+    )* <ImageAttributesContent>
+  end
+
+  rule image_attr_text_unprotected
+    [^,\]]+ <ImageAttributeValue>
+  end
+
+  rule image_attr_text_protected
+    '"' image_text_protected '"' <ImageAttributeValueProtected>
+  end
+
+  rule image_text_protected
+    [^"]+ <ImageAttributeValue>
+  end
+
+  rule image_named_attr
+    image_named_attr_key '=' image_named_attr_value <ImageNamedAttribute>
+  end
+
+  rule image_named_attr_key
+    [^,=]+ <ImageNamedAttributeKey>
+  end
+
+  rule image_named_attr_value
+    ( image_text_protected / image_attr_text_protected )
+  end
+
+  rule image_attr_value_unprotected
+    [^,\]]+ <ImageAttributeValue>
+  end
+end

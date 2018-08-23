@@ -1,0 +1,1 @@
+Click image:icons/play.png[Play, title="Play"] to get the party started.

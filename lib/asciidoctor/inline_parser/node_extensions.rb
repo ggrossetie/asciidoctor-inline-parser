@@ -516,3 +516,193 @@ module AsciidoctorPassthroughGrammar
   class PassthroughTriplePlusContent < ::Treetop::Runtime::SyntaxNode
   end
 end
+
+module AsciidoctorImageGrammar
+  # Image
+  class Image < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      %(<span #{class_html}><img src="#{target}"#{alt_html}#{title_html}#{width_html}#{height_html}></span>)
+    end
+
+    def roles
+      get_attr 'roles'
+    end
+
+    def target
+      target_node = @comprehensive_elements.select { |el| image_target? el }.first
+      target_node.name if target_node
+    end
+
+    def alt
+      value = get_attr 'alt'
+      if value
+        value
+      else
+        extname = File.extname(target)
+        ::File.basename(target, extname)
+      end
+    end
+
+    def title
+      get_attr 'title'
+    end
+
+    def width
+      get_attr 'width'
+    end
+
+    def height
+      get_attr 'height'
+    end
+
+    def width_html
+      value = width
+      %( width="#{value}") if value
+    end
+
+    def height_html
+      value = height
+      %( height="#{value}") if value
+    end
+
+    def class_html
+      %(class="#{roles.join(' ')}")
+    end
+
+    def alt_html
+      value = alt
+      %( alt="#{value}") if value
+    end
+
+    def title_html
+      value = title
+      %( title="#{value}") if value
+    end
+
+    private
+
+    def get_attr name
+      attrs_node = @comprehensive_elements.select { |el| image_attrs? el }.first
+      attrs_node.public_send(name) if attrs_node && (attrs_node.respond_to? name)
+    end
+
+    def image_target? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageTarget
+    end
+
+    def image_attrs? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageAttributes
+    end
+  end
+  # Attributes
+  class ImageAttributes < ::Treetop::Runtime::SyntaxNode
+    def title
+      content_node = @comprehensive_elements.select { |el| attr_content? el }.first
+      # named attribute 'title'
+      content_node.attrs['title'] if content_node
+    end
+
+    def alt
+      content_node = @comprehensive_elements.select { |el| attr_content? el }.first
+      # named attribute 'alt' or the first attribute (0 based index)
+      content_node.attrs['alt'] || content_node.attrs['0'] if content_node
+    end
+
+    def width
+      content_node = @comprehensive_elements.select { |el| attr_content? el }.first
+      # named attribute 'alt' or the second attribute (0 based index)
+      content_node.attrs['width'] || content_node.attrs['1'] if content_node
+    end
+
+    def height
+      content_node = @comprehensive_elements.select { |el| attr_content? el }.first
+      # named attribute 'alt' or the third attribute (0 based index)
+      content_node.attrs['height'] || content_node.attrs['2'] if content_node
+    end
+
+    def roles
+      result = ['image']
+      content_node = @comprehensive_elements.select { |el| attr_content? el }.first
+      # named attribute 'alt' or the fourth attribute (0 based index)
+      if content_node
+        roles = content_node.attrs['role'] || content_node.attrs['3'] || ''
+        result += roles.split(',').map { |role| role.strip! || role }
+      end
+      result
+    end
+
+    private
+
+    def attr_content? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageAttributesContent
+    end
+  end
+  # Image target
+  class ImageTarget < ::Treetop::Runtime::SyntaxNode
+    def name
+      text_value
+    end
+  end
+  # Attributes content
+  class ImageAttributesContent < ::Treetop::Runtime::SyntaxNode
+    def attrs
+      @comprehensive_elements.each_with_index.map do |el, index|
+        if el.instance_of? ::AsciidoctorImageGrammar::ImageNamedAttribute
+          { el.key => el.value }
+        else
+          { index.to_s => el.value }
+        end
+      end.inject(:merge)
+    end
+  end
+  # Named attribute
+  class ImageNamedAttribute < ::Treetop::Runtime::SyntaxNode
+    def key
+      key_node = @comprehensive_elements.select { |el| attr_key? el }.first
+      key_node.text_value if key_node
+    end
+
+    def value
+      value_node = @comprehensive_elements.select { |el| attr_value? el }.first
+      value_node.value if value_node
+    end
+
+    private
+
+    def attr_key? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageNamedAttributeKey
+    end
+
+    def attr_value? node
+      (attr_value_unprotected? node) || (attr_value_protected? node)
+    end
+
+    def attr_value_unprotected? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageNamedAttributeValue
+    end
+
+    def attr_value_protected? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageAttributeValueProtected
+    end
+  end
+  class ImageNamedAttributeKey < ::Treetop::Runtime::SyntaxNode
+  end
+  # Named attribute value
+  class ImageNamedAttributeValue < ::Treetop::Runtime::SyntaxNode
+    def value
+      @comprehensive_elements.first.value
+    end
+  end
+  # Attribute value protected with double quotes
+  class ImageAttributeValueProtected < ::Treetop::Runtime::SyntaxNode
+    def value
+      @elements[1].text_value # [0]: " [1]: name
+    end
+  end
+  # Attribute value
+  class ImageAttributeValue < ::Treetop::Runtime::SyntaxNode
+    def value
+      text_value
+    end
+  end
+end

@@ -1,12 +1,14 @@
 require './lib/asciidoctor/inline_parser/asciidoctor_link_grammar'
 require './lib/asciidoctor/inline_parser/asciidoctor_email_grammar'
 require './lib/asciidoctor/inline_parser/asciidoctor_passthrough_grammar'
+require './lib/asciidoctor/inline_parser/asciidoctor_image_grammar'
 
 grammar AsciidoctorGrammar
 
   include AsciidoctorLinkGrammar
   include AsciidoctorEmailGrammar
   include AsciidoctorPassthroughGrammar
+  include AsciidoctorImageGrammar
 
   rule text
     (quoted)* <Text>
@@ -15,6 +17,7 @@ grammar AsciidoctorGrammar
   rule quoted
     (
       escaped_passthrough_inline_macro / escaped_quoted_symbol / escaped_role_symbol / escaped_explicit_email / escaped_implicit_email /
+      image /
       passthrough_inline_macro / passthrough_triple_plus /
       double_curved_quotes / single_curved_quotes /
       literal /
