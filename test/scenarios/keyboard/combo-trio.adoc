@@ -1,0 +1,1 @@
+New incognito window: kbd:[Ctrl+Shift+N]

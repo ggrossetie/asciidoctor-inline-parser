@@ -1,0 +1,1 @@
+Toggle fullscreen: kbd:[F11]

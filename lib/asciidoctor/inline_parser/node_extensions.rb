@@ -710,3 +710,37 @@ module AsciidoctorImageGrammar
     end
   end
 end
+
+module AsciidoctorKbdGrammar
+  # Keybord kbd inline macro
+  class Kbd < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      if keys.size > 1
+        %(<span class="keyseq">#{keys_html}</span>)
+      else
+        keys_html
+      end
+    end
+
+    def keys_html
+      keys.map do |key|
+        key_text = key.empty? ? '+' : key
+        key_text = key_text.strip.gsub '\]', ']'
+        "<kbd>#{key_text}</kbd>"
+      end.join '+'
+    end
+
+    def keys
+      content_node = @comprehensive_elements.select { |el| attr_content? el }.first
+      content_node.text_value.split('+').map(&:strip) if content_node
+    end
+
+    private
+
+    def attr_content? node
+      node.instance_of? ::AsciidoctorKbdGrammar::KbdContent
+    end
+  end
+  class KbdContent < ::Treetop::Runtime::SyntaxNode
+  end
+end

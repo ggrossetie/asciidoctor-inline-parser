@@ -1,0 +1,1 @@
+Open a new tab: kbd:[Ctrl+T]
