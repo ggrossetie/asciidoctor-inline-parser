@@ -21,7 +21,7 @@ grammar AsciidoctorGrammar
       passthrough_inline_macro / passthrough_triple_plus /
       double_curved_quotes / single_curved_quotes /
       literal /
-      explicit_link / implicit_link /
+      explicit_link / explicit_link_protected / implicit_link /
       explicit_email / implicit_email /
       unconstrained_strong / unconstrained_emphasis / unconstrained_monospaced / unconstrained_mark /
       strong / emphasis / monospaced / mark / superscript / subscript /

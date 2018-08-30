@@ -183,7 +183,11 @@ module AsciidoctorLinkGrammar
     BLANK_SHORTHAND = '^'.freeze
 
     def to_html
-      %(<a href="#{target}" class="#{roles.join(',')}"#{window ? %( target="#{window}") : ''}>#{text}</a>)
+      %(<a href="#{target}"#{roles_html}#{window ? %( target="#{window}") : ''}>#{text}</a>)
+    end
+
+    def roles_html
+      %( class="#{roles.join(',')}") unless roles.empty?
     end
 
     def target
@@ -218,7 +222,7 @@ module AsciidoctorLinkGrammar
 
     def roles
       attrs_node = @comprehensive_elements.select { |el| el.instance_of? ::AsciidoctorGrammar::LinkAttributes }.first
-      return ['bare'] if attrs_node.nil? || attrs_node.roles.empty?
+      return ['bare'] if attrs_node.nil? || (attrs_node.roles.empty? && attrs_node.text.nil?)
       attrs_node.roles
     end
   end

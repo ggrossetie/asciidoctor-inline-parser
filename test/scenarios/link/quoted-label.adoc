@@ -1,1 +1,1 @@
-https://example.org["Google, Yahoo, Bing"]. Pick your poison.
+https://example.org["Google, Yahoo, Bing"]. Pick your search engine.

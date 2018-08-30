@@ -1,7 +1,19 @@
 grammar AsciidoctorLinkGrammar
 
   rule explicit_link
-    'link:' implicit_link # TODO: Should we use a greedier regexp since we are using an explicit link ?
+    'link:' uri_scheme uri_path_explicit link_attrs? <Link>
+  end
+
+  rule explicit_link_protected
+    'link:++' uri_scheme uri_path_protected '++' link_attrs? <Link>
+  end
+
+  rule uri_path_explicit
+    [^\[]+ <LinkPath>
+  end
+
+  rule uri_path_protected
+    [^+]+ <LinkPath>
   end
 
   rule implicit_link
