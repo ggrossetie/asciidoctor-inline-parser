@@ -1,10 +1,14 @@
-grammar AsciidoctorKbdGrammar
+grammar AsciidoctorMenuGrammar
 
-  rule kbd
-    'kbd:[' kbd_content ']' <Kbd>
+  rule menu
+    'menu:' menu_target '[' menu_content ']' <Menu>
   end
 
-  rule kbd_content
-    ( '\]' / [^\]] )+ <KbdContent>
+  rule menu_target
+    [^\[]+ <MenuTarget>
+  end
+
+  rule menu_content
+    ( '\]' / [^\]] )* <MenuContent>
   end
 end

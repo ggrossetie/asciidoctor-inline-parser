@@ -766,3 +766,60 @@ module AsciidoctorBtnGrammar
   class BtnContent < ::Treetop::Runtime::SyntaxNode
   end
 end
+
+module AsciidoctorMenuGrammar
+  # Menu inline macro
+  class Menu < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      if items && items.size > 1
+        %(<span class="menuseq">#{items_html}</span>)
+      else
+        %(<b class="menuref">#{item_html}</b>)
+      end
+    end
+
+    def item_html
+      items[0].strip.gsub '\]', ']'
+    end
+
+    def items_html
+      items.each_with_index.map do |item, index|
+        item_text = item.strip.gsub '\]', ']'
+        %(<b class="#{item_class index, items.size}">#{item_text}</b>)
+      end.join '&nbsp;<i class="fa fa-angle-right caret"></i> '
+    end
+
+    def item_class index, size
+      if index.zero?
+        'menu'
+      elsif index == size - 1
+        'menuitem'
+      else
+        'submenu'
+      end
+    end
+
+    def items
+      result = []
+      target_node = @comprehensive_elements.select { |el| target? el }.first
+      result.push(target_node.text_value) if target_node
+      content_node = @comprehensive_elements.select { |el| content? el }.first
+      result.concat(content_node.text_value.split('>').map(&:strip)) if content_node
+      result
+    end
+
+    private
+
+    def content? node
+      node.instance_of? ::AsciidoctorMenuGrammar::MenuContent
+    end
+
+    def target? node
+      node.instance_of? ::AsciidoctorMenuGrammar::MenuTarget
+    end
+  end
+  class MenuTarget < ::Treetop::Runtime::SyntaxNode
+  end
+  class MenuContent < ::Treetop::Runtime::SyntaxNode
+  end
+end

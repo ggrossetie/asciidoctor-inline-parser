@@ -4,6 +4,7 @@ require './lib/asciidoctor/inline_parser/asciidoctor_passthrough_grammar'
 require './lib/asciidoctor/inline_parser/asciidoctor_image_grammar'
 require './lib/asciidoctor/inline_parser/asciidoctor_kbd_grammar'
 require './lib/asciidoctor/inline_parser/asciidoctor_btn_grammar'
+require './lib/asciidoctor/inline_parser/asciidoctor_menu_grammar'
 
 grammar AsciidoctorGrammar
 
@@ -13,6 +14,7 @@ grammar AsciidoctorGrammar
   include AsciidoctorImageGrammar
   include AsciidoctorKbdGrammar
   include AsciidoctorBtnGrammar
+  include AsciidoctorMenuGrammar
 
   rule text
     (quoted)* <Text>
@@ -22,7 +24,7 @@ grammar AsciidoctorGrammar
     (
       escaped_passthrough_inline_macro / escaped_quoted_symbol / escaped_role_symbol / escaped_explicit_email / escaped_implicit_email /
       image /
-      kbd / btn /
+      kbd / btn / menu /
       passthrough_inline_macro / passthrough_triple_plus /
       double_curved_quotes / single_curved_quotes /
       literal /

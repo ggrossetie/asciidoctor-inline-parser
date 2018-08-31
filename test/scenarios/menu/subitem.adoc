@@ -1,0 +1,1 @@
+Select menu:View[Zoom > Reset] to reset the zoom level to the default setting.
