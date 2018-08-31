@@ -1,0 +1,10 @@
+grammar AsciidoctorKbdGrammar
+
+  rule kbd
+    'kbd:[' kbd_content ']' <Kbd>
+  end
+
+  rule kbd_content
+    ( '\]' / [^\]] )+ <KbdContent>
+  end
+end

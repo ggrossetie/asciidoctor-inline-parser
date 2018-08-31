@@ -1,0 +1,1 @@
+Select a file in the file navigator and click btn:[Open].

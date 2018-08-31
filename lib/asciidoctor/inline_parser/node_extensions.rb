@@ -744,3 +744,25 @@ module AsciidoctorKbdGrammar
   class KbdContent < ::Treetop::Runtime::SyntaxNode
   end
 end
+
+module AsciidoctorBtnGrammar
+  # Button btn inline macro
+  class Btn < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      %(<b class="button">#{text}</b>)
+    end
+
+    def text
+      content_node = @comprehensive_elements.select { |el| attr_content? el }.first
+      content_node.text_value if content_node
+    end
+
+    private
+
+    def attr_content? node
+      node.instance_of? ::AsciidoctorBtnGrammar::BtnContent
+    end
+  end
+  class BtnContent < ::Treetop::Runtime::SyntaxNode
+  end
+end

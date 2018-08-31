@@ -1,0 +1,10 @@
+grammar AsciidoctorBtnGrammar
+
+  rule btn
+    'btn:[' btn_content ']' <Btn>
+  end
+
+  rule btn_content
+    ( '\]' / [^\]] )+ <BtnContent>
+  end
+end
