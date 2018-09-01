@@ -11,6 +11,13 @@ module Asciidoctor
     @parser = ::AsciidoctorGrammarParser.new
 
     def self.parse text
+      # HACK: Use the following rule to parse a literal line.
+      # Is it possible to implement the following Treetop rule: "when the line is indented with one or more spaces" ?
+      # Since Treetop consumes the input, a given rule doesn't know if a matching space is at the start of the line.
+      if text.start_with? ' '
+        text = text.strip
+        return ::AsciidoctorGrammar::LiteralLine.new text, 0..text.length
+      end
       ast = @parser.parse text
       return ast if ast.nil?
       clean_tree ast

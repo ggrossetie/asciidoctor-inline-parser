@@ -112,6 +112,21 @@ module AsciidoctorGrammar
     end
   end
 
+  # Literal (single) line
+  class LiteralLine < ::Treetop::Runtime::SyntaxNode
+    def to_html
+      %(<div class="literalblock">
+<div class="content">
+<pre>#{text}</pre>
+</div>
+</div>)
+    end
+
+    def text
+      input
+    end
+  end
+
   # Mark
   class MarkQuoted < ::AsciidoctorGrammar::QuotedNode
   end
