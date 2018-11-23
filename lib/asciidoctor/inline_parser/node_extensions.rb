@@ -1,4 +1,4 @@
-require './lib/asciidoctor/inline_parser/subs'
+require_relative 'subs'
 
 module AsciidoctorGrammar
   # Text

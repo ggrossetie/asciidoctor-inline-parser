@@ -1,4 +1,4 @@
-require File.expand_path('lib/asciidoctor/inline_parser/version', __dir__)
+require_relative 'lib/asciidoctor/inline_parser/version'
 
 Gem::Specification.new do |s|
   s.name     = 'asciidoctor-inline-parser'
