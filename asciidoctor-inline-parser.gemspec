@@ -1,7 +1,7 @@
 require File.expand_path('lib/asciidoctor/inline_parser/version', __dir__)
 
 Gem::Specification.new do |s|
-  s.name     = 'asciidoctor-templates-compiler'
+  s.name     = 'asciidoctor-inline-parser'
   s.version  = Asciidoctor::InlineParser::VERSION
   s.author   = 'Guillaume Grossetie'
   s.email    = 'ggrossetie@yuzutech.fr'
