@@ -1,13 +1,19 @@
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.3.0
 
 Metrics/LineLength:
   Max: 120
   Exclude:
     - 'test/*'
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
+
+Style/SafeNavigation:
+  Enabled: false
 
 Style/SymbolArray:
   Enabled: false

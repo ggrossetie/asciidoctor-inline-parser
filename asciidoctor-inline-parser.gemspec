@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.files    = Dir['lib/**/*', '*.gemspec', 'LICENSE*', 'README*']
   s.executables = Dir['bin/*'].map { |f| File.basename(f) }
 
-  s.required_ruby_version = '>= 2.2'
+  s.required_ruby_version = '>= 2.3.0'
 
   s.add_runtime_dependency 'asciidoctor', '~> 1.5'
   s.add_runtime_dependency 'treetop', '~> 1.6.10'
