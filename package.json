@@ -1,0 +1,31 @@
+{
+  "name": "asciidoctor-inline-parser",
+  "version": "1.0.0",
+  "description": "Asciidoctor Inline Parser",
+  "main": "build/asciidoctor-inline-parser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mogztter/asciidoctor-inline-parser.git"
+  },
+  "keywords": [],
+  "author": "Guillaume Grossetie",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mogztter/asciidoctor-inline-parser/issues"
+  },
+  "scripts": {
+    "build": "node compile.js",
+    "test": "npm run build && node test.js"
+  },
+  "devDependencies": {
+    "bestikk-download": "0.1.0",
+    "bestikk-fs": "0.1.0",
+    "opal-compiler": "1.0.7"
+  },
+  "dependencies": {
+    "opal-runtime": "^1.0.7"
+  }
+}
