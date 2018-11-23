@@ -1,9 +1,8 @@
 require 'polyglot'
 require 'treetop'
 
-require File.join __dir__, 'node_extensions.rb'
-
-require './lib/asciidoctor/inline_parser/asciidoctor_grammar'
+require_relative 'node_extensions'
+require 'asciidoctor/inline_parser/asciidoctor_grammar'
 
 module Asciidoctor
   # Asciidoctor Inline Parser

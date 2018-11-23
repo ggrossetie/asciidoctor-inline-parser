@@ -1,10 +1,10 @@
-require './lib/asciidoctor/inline_parser/asciidoctor_link_grammar'
-require './lib/asciidoctor/inline_parser/asciidoctor_email_grammar'
-require './lib/asciidoctor/inline_parser/asciidoctor_passthrough_grammar'
-require './lib/asciidoctor/inline_parser/asciidoctor_image_grammar'
-require './lib/asciidoctor/inline_parser/asciidoctor_kbd_grammar'
-require './lib/asciidoctor/inline_parser/asciidoctor_btn_grammar'
-require './lib/asciidoctor/inline_parser/asciidoctor_menu_grammar'
+require 'asciidoctor/inline_parser/asciidoctor_link_grammar'
+require 'asciidoctor/inline_parser/asciidoctor_email_grammar'
+require 'asciidoctor/inline_parser/asciidoctor_passthrough_grammar'
+require 'asciidoctor/inline_parser/asciidoctor_image_grammar'
+require 'asciidoctor/inline_parser/asciidoctor_kbd_grammar'
+require 'asciidoctor/inline_parser/asciidoctor_btn_grammar'
+require 'asciidoctor/inline_parser/asciidoctor_menu_grammar'
 
 grammar AsciidoctorGrammar
 

@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-require 'asciidoctor/inline_parser/version'
-require 'asciidoctor/inline_parser/parser'
+require_relative 'inline_parser/version'
+require_relative 'inline_parser/parser'
