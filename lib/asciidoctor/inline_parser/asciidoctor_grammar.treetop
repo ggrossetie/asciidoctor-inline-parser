@@ -161,7 +161,7 @@ grammar AsciidoctorGrammar
   end
 
   rule constrained_mark_exception
-    [a-zA-Z]
+    '[\p{Word}&&[^_]]'r
   end
 
   rule escaped_quoted_symbol

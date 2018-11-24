@@ -122,14 +122,12 @@ describe 'quoted text' do
         nodes.first.text_value.must_equal input
         nodes.first.content.must_equal %(a few\nwords)
       end
-      it 'should parse a constrained string with a number directly outside the formatting marks' do
+      it 'should not parse a constrained string with a number directly outside the formatting marks' do
         input = "E = #{symbol}mc#{symbol}2"
         ast = ::Asciidoctor::InlineParser.parse input
         ast.text_value.must_equal input
         nodes = find_by (node_type_must_be type), ast
-        nodes.size.must_equal 1
-        nodes.first.text_value.must_equal "#{symbol}mc#{symbol}"
-        nodes.first.content.must_equal 'mc'
+        nodes.size.must_equal 0
       end
       it 'should parse a constrained string with a colon directly before the starting formatting mark' do
         input = "There's a colon:#{symbol}directly#{symbol} before the starting formatting mark."
