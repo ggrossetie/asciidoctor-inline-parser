@@ -1,5 +1,7 @@
 AllCops:
   TargetRubyVersion: 2.3.0
+  Exclude:
+    - 'lib/asciidoctor/inline_parser/asciidoctor*grammar.rb'
 
 Metrics/LineLength:
   Max: 120

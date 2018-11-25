@@ -1,8 +1,7 @@
-require 'polyglot'
-require 'treetop'
+require 'treetop/runtime'
 
 require_relative 'node_extensions'
-require 'asciidoctor/inline_parser/asciidoctor_grammar'
+require_relative 'asciidoctor_grammar'
 
 module Asciidoctor
   # Asciidoctor Inline Parser
