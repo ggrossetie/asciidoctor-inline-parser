@@ -1,6 +1,7 @@
 require 'treetop/runtime'
 
 require_relative 'node_extensions'
+require_relative 'mapper'
 require_relative 'asciidoctor_grammar'
 
 module Asciidoctor
@@ -8,7 +9,7 @@ module Asciidoctor
   module InlineParser
     @parser = ::AsciidoctorGrammarParser.new
 
-    def self.parse text
+    def self.parse text, raw = false
       # HACK: Use the following rule to parse a literal line.
       # Is it possible to implement the following Treetop rule: "when the line is indented with one or more spaces" ?
       # Since Treetop consumes the input, a given rule doesn't know if a matching space is at the start of the line.
@@ -18,9 +19,13 @@ module Asciidoctor
       end
       ast = @parser.parse text
       return ast if ast.nil?
-      clean_tree ast
+      clean_tree ast unless raw
       recurse ast
       ast
+    end
+
+    def self.raw_parse text
+      parse text, true
     end
 
     def self.recurse node

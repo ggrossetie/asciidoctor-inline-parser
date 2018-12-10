@@ -648,7 +648,7 @@ module AsciidoctorImageGrammar
 end
 
 module AsciidoctorKbdGrammar
-  # Keybord kbd inline macro
+  # Keyboard kbd inline macro
   class Kbd < ::Treetop::Runtime::SyntaxNode
     def node_name
       'kbd'
