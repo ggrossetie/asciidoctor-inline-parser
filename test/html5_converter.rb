@@ -24,7 +24,7 @@ class Html5Converter
 
   def inline node
     text = node.text_value
-    elements = node.instance_variable_get('@comprehensive_elements')
+    elements = node.terminal? ? node.elements : node.instance_variable_get('@comprehensive_elements')
     if elements.nil?
       convert node # workaround for LiteralLine
     elsif elements.empty?
