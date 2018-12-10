@@ -1,9 +1,11 @@
 require_relative 'test_helper'
 require 'asciidoctor'
 require 'asciidoctor/inline_parser/parser'
+require_relative 'html5_converter'
 
 describe 'scenario' do
   let(:doc) { ::Asciidoctor::InlineParser.parse input }
+  let(:converter) { ::Html5Converter.new }
 
   Dir.chdir File.join __dir__, 'scenarios' do
     (Dir.glob '*/*.adoc').each do |input_filename|
@@ -15,7 +17,7 @@ describe 'scenario' do
         let(:input) { IO.read input_filename, mode: 'r:UTF-8', newline: :universal }
         let(:expected) { (IO.read output_filename, mode: 'r:UTF-8', newline: :universal).chomp }
         it 'converts inline Asciidoctor syntax to HTML' do
-          doc.to_html.must_equal expected
+          (converter.inline doc).must_equal expected
         end
       end
     end

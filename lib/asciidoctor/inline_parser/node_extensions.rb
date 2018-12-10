@@ -3,8 +3,8 @@ require_relative 'subs'
 module AsciidoctorGrammar
   # Text
   class Text < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      @comprehensive_elements.first.to_html
+    def node_name
+      'text'
     end
   end
 
@@ -13,39 +13,15 @@ module AsciidoctorGrammar
 
   # Expression
   class Expression < ::Treetop::Runtime::SyntaxNode
-    attr_reader :document
-
-    def initialize input, interval, elements
-      @document = ::Asciidoctor::Document.new # FIXME: use the current Asciidoctor Document
-      super input, interval, elements
-    end
-
-    def to_html
-      text = text_value
-      if @comprehensive_elements.empty?
-        apply_sub text
-      else
-        @comprehensive_elements.reverse_each do |el|
-          text[el.interval] = el.to_html unless el.instance_of? ::Treetop::Runtime::SyntaxNode
-        end
-        text
-      end
-    end
-
-    private
-
-    def apply_sub text
-      # TODO: Implement all the substitutions
-      text = ::Asciidoctor::Subs.sub_specialchars text
-      text = ::Asciidoctor::Subs.sub_attributes text, @document
-      ::Asciidoctor::Subs.sub_replacements text
+    def node_name
+      'inline'
     end
   end
 
   # Quoted content
   class QuotedContent < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      text_value
+    def node_name
+      'formatted'
     end
   end
 
@@ -72,54 +48,50 @@ module AsciidoctorGrammar
 
   # Strong
   class StrongQuoted < ::AsciidoctorGrammar::QuotedNode
-    def to_html
-      "<strong>#{@comprehensive_elements.first.to_html}</strong>"
+    def node_name
+      'strong'
     end
   end
 
   # Emphasis
   class EmphasisQuoted < ::AsciidoctorGrammar::QuotedNode
-    def to_html
-      "<em>#{@comprehensive_elements.first.to_html}</em>"
+    def node_name
+      'emphasis'
     end
   end
 
   # Monospaced
   class MonospacedQuoted < ::AsciidoctorGrammar::QuotedNode
-    def to_html
-      "<code>#{@comprehensive_elements.first.to_html}</code>"
+    def node_name
+      'monospaced'
     end
   end
 
   # Double curved
   class DoubleCurvedQuoted < ::AsciidoctorGrammar::QuotedNode
-    def to_html
-      "“#{@comprehensive_elements.first.to_html}”"
+    def node_name
+      'double_quotation'
     end
   end
 
   # Single curved
   class SingleCurvedQuoted < ::AsciidoctorGrammar::QuotedNode
-    def to_html
-      "‘#{@comprehensive_elements.first.to_html}’"
+    def node_name
+      'single_quotation'
     end
   end
 
   # Literal
   class Literal < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      @comprehensive_elements.first.text_value
+    def node_name
+      'literal'
     end
   end
 
   # Literal (single) line
   class LiteralLine < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      %(<div class="literalblock">
-<div class="content">
-<pre>#{text}</pre>
-</div>
-</div>)
+    def node_name
+      'literal_line'
     end
 
     def text
@@ -197,12 +169,8 @@ module AsciidoctorLinkGrammar
   class Link < ::Treetop::Runtime::SyntaxNode
     BLANK_SHORTHAND = '^'.freeze
 
-    def to_html
-      %(<a href="#{target}"#{roles_html}#{window ? %( target="#{window}") : ''}>#{text}</a>)
-    end
-
-    def roles_html
-      %( class="#{roles.join(',')}") unless roles.empty?
+    def node_name
+      'anchor'
     end
 
     def target
@@ -244,15 +212,15 @@ module AsciidoctorLinkGrammar
 
   # Link scheme
   class LinkScheme < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      text_value
+    def node_name
+      'link_scheme'
     end
   end
 
   # Link path
   class LinkPath < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      text_value
+    def node_name
+      'link_path'
     end
   end
 
@@ -333,10 +301,8 @@ end
 module AsciidoctorEmailGrammar
   # Email macro
   class EmailMacro < ::Treetop::Runtime::SyntaxNode
-    SPACE = ' '.freeze
-
-    def to_html
-      %(<a href="mailto:#{link}">#{name}</a>)
+    def node_name
+      'email_macro'
     end
 
     def name
@@ -355,25 +321,9 @@ module AsciidoctorEmailGrammar
       attrs_node.body if attrs_node
     end
 
-    def link
-      subject_text = %(?subject=#{uri_encode_spaces subject}) if subject
-      body_text = %(&amp;body=#{uri_encode_spaces body}) if body
-      %(#{email}#{subject_text}#{body_text})
-    end
-
     def email
       email_node = @comprehensive_elements.select { |el| email? el }.first
       email_node.email if email_node
-    end
-
-    private
-
-    def uri_encode_spaces str
-      if str.include? SPACE
-        str.gsub SPACE, '%20'
-      else
-        str
-      end
     end
 
     def email? node
@@ -386,8 +336,8 @@ module AsciidoctorEmailGrammar
   end
   # Email
   class Email < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      %(<a href="mailto:#{email}">#{text}</a>)
+    def node_name
+      'email'
     end
 
     def text
@@ -451,10 +401,8 @@ module AsciidoctorEmailGrammar
   end
   # Escaped email
   class EscapedEmail < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      text = text_value
-      text[0] = ''
-      text
+    def node_name
+      'escaped_email'
     end
   end
 end
@@ -462,16 +410,15 @@ end
 module AsciidoctorPassthroughGrammar
   # Escaped passthrough inline macro
   class EscapedPassthroughInlineMacro < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      text_value.gsub '\pass:', 'pass:'
+    def node_name
+      'passthrough'
     end
   end
 
   # Passthrough inline macro
   class PassthroughInlineMacro < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      text = content
-      apply_subs text
+    def node_name
+      'passthrough_inline'
     end
 
     def content
@@ -483,8 +430,6 @@ module AsciidoctorPassthroughGrammar
       subs_node = @comprehensive_elements.select { |el| passthrough_inline_macro_subs? el }.first
       subs_node.subs if subs_node
     end
-
-    private
 
     def apply_subs text
       # TODO: Implement all the substitutions
@@ -517,8 +462,8 @@ module AsciidoctorPassthroughGrammar
   end
   # Passthrough using +++ (triple plus)
   class PassthroughTriplePlus < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      content
+    def node_name
+      'passthrough_triple_plus'
     end
 
     def content
@@ -539,8 +484,8 @@ end
 module AsciidoctorImageGrammar
   # Image
   class Image < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      %(<span #{class_html}><img src="#{target}"#{alt_html}#{title_html}#{width_html}#{height_html}></span>)
+    def node_name
+      'image'
     end
 
     def roles
@@ -572,30 +517,6 @@ module AsciidoctorImageGrammar
 
     def height
       get_attr 'height'
-    end
-
-    def width_html
-      value = width
-      %( width="#{value}") if value
-    end
-
-    def height_html
-      value = height
-      %( height="#{value}") if value
-    end
-
-    def class_html
-      %(class="#{roles.join(' ')}")
-    end
-
-    def alt_html
-      value = alt
-      %( alt="#{value}") if value
-    end
-
-    def title_html
-      value = title
-      %( title="#{value}") if value
     end
 
     private
@@ -729,20 +650,8 @@ end
 module AsciidoctorKbdGrammar
   # Keybord kbd inline macro
   class Kbd < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      if keys.size > 1
-        %(<span class="keyseq">#{keys_html}</span>)
-      else
-        keys_html
-      end
-    end
-
-    def keys_html
-      keys.map do |key|
-        key_text = key.empty? ? '+' : key
-        key_text = key_text.strip.gsub '\]', ']'
-        "<kbd>#{key_text}</kbd>"
-      end.join '+'
+    def node_name
+      'kbd'
     end
 
     def keys
@@ -763,8 +672,8 @@ end
 module AsciidoctorBtnGrammar
   # Button btn inline macro
   class Btn < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      %(<b class="button">#{text}</b>)
+    def node_name
+      'btn'
     end
 
     def text
@@ -785,33 +694,8 @@ end
 module AsciidoctorMenuGrammar
   # Menu inline macro
   class Menu < ::Treetop::Runtime::SyntaxNode
-    def to_html
-      if items && items.size > 1
-        %(<span class="menuseq">#{items_html}</span>)
-      else
-        %(<b class="menuref">#{item_html}</b>)
-      end
-    end
-
-    def item_html
-      items[0].strip.gsub '\]', ']'
-    end
-
-    def items_html
-      items.each_with_index.map do |item, index|
-        item_text = item.strip.gsub '\]', ']'
-        %(<b class="#{item_class index, items.size}">#{item_text}</b>)
-      end.join '&nbsp;<i class="fa fa-angle-right caret"></i> '
-    end
-
-    def item_class index, size
-      if index.zero?
-        'menu'
-      elsif index == size - 1
-        'menuitem'
-      else
-        'submenu'
-      end
+    def node_name
+      'menu'
     end
 
     def items
