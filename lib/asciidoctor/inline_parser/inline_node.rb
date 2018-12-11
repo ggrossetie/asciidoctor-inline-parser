@@ -55,7 +55,7 @@ module Asciidoctor
       attr_accessor :body
     end
 
-    class DoubleQuotation
+    class DoubleQuotation < Node
     end
 
     class SingleQuotation

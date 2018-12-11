@@ -196,4 +196,16 @@ describe 'mapper' do
       result.first.body.must_equal 'Please accept my pull request'
     end
   end
+
+  describe 'quotation' do
+    it 'should map double quotation' do
+      input = '"`double curved quotes`"'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 1
+      result.first.source.must_equal '"`double curved quotes`"'
+      result.first.text.must_equal 'double curved quotes'
+      result.first.class.name.must_equal 'Asciidoctor::InlineParser::DoubleQuotation'
+    end
+  end
 end

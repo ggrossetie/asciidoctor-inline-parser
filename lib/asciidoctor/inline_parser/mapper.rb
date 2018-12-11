@@ -12,7 +12,8 @@ module Asciidoctor
       'AsciidoctorGrammar::SuperscriptQuoted' => 'Superscript',
       'AsciidoctorGrammar::SubscriptQuoted' => 'Subscript',
       'AsciidoctorEmailGrammar::Email' => 'Email',
-      'AsciidoctorEmailGrammar::EmailMacro' => 'Email'
+      'AsciidoctorEmailGrammar::EmailMacro' => 'Email',
+      'AsciidoctorGrammar::DoubleCurvedQuoted' => 'DoubleQuotation',
     }
 
     # Map a Treetop AST to an Asciidoctor AST
