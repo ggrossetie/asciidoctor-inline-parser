@@ -37,7 +37,16 @@ module Asciidoctor
     class Subscript < Node
     end
 
-    class Anchor
+    # Anchor
+    class Anchor < Node
+      # The anchor URI (target)
+      attr_accessor :target
+
+      # The name of the anchor
+      attr_accessor :link
+
+      # An array of roles
+      attr_accessor :roles
     end
 
     # Email

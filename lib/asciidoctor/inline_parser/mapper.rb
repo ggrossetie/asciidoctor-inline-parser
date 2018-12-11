@@ -15,6 +15,7 @@ module Asciidoctor
       'AsciidoctorEmailGrammar::EmailMacro' => 'Email',
       'AsciidoctorGrammar::DoubleCurvedQuoted' => 'DoubleQuotation',
       'AsciidoctorGrammar::SingleCurvedQuoted' => 'SingleQuotation',
+      'AsciidoctorLinkGrammar::Link' => 'Anchor',
     }
 
     # Map a Treetop AST to an Asciidoctor AST
@@ -69,6 +70,10 @@ module Asciidoctor
             inline_node.link = node.name
             inline_node.subject = node.subject
             inline_node.body = node.body
+          elsif node.class.name == 'AsciidoctorLinkGrammar::Link'
+            inline_node.text = inline_node.target = node.target
+            inline_node.link = node.text
+            inline_node.roles = node.roles
           else
             inline_node.text = node.instance_variable_get('@comprehensive_elements').first.text_value
           end

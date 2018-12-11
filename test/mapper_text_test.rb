@@ -217,4 +217,21 @@ describe 'mapper' do
       result.first.class.name.must_equal 'Asciidoctor::InlineParser::SingleQuotation'
     end
   end
+
+  describe 'link' do
+    it 'should map a bare link' do
+      input = 'The AsciiDoc project is located at http://asciidoc.org.'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 3
+      result.first.source.must_equal 'The AsciiDoc project is located at '
+      result.first.class.name.must_equal 'Asciidoctor::InlineParser::Text'
+      result[1].source.must_equal 'http://asciidoc.org'
+      result[1].text.must_equal 'http://asciidoc.org'
+      result[1].roles.must_include 'bare'
+      result[1].class.name.must_equal 'Asciidoctor::InlineParser::Anchor'
+      result[2].source.must_equal '.'
+      result[2].class.name.must_equal 'Asciidoctor::InlineParser::Text'
+    end
+  end
 end
