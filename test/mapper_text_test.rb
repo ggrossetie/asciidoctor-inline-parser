@@ -133,4 +133,67 @@ describe 'mapper' do
       result[1].children[2].source.must_equal ' important!'
     end
   end
+  describe 'email' do
+    it 'should map an implicit email' do
+      input = 'Here is my email address: doc.writer@asciidoc.org.'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 3
+      result.first.source.must_equal 'Here is my email address: '
+      result[1].source.must_equal 'doc.writer@asciidoc.org'
+      result[1].text.must_equal 'doc.writer@asciidoc.org'
+      result[1].target.must_equal 'doc.writer@asciidoc.org'
+      result[1].link.must_equal 'doc.writer@asciidoc.org'
+      result[1].subject.must_be_nil
+      result[2].source.must_equal '.'
+    end
+    it 'should map an explicit email' do
+      input = 'If you want to know more about the mailto macro, send me an email at mailto:doc.writer@asciidoc.org[]!'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 3
+      result.first.source.must_equal 'If you want to know more about the mailto macro, send me an email at '
+      result[1].source.must_equal 'mailto:doc.writer@asciidoc.org[]'
+      result[1].text.must_equal 'doc.writer@asciidoc.org'
+      result[1].target.must_equal 'doc.writer@asciidoc.org'
+      result[1].link.must_equal 'doc.writer@asciidoc.org'
+      result[1].subject.must_be_nil
+      result[2].source.must_equal '!'
+    end
+    it 'should map a link' do
+      input = 'mailto:doc.writer@asciidoc.org[Doc Writer]'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 1
+      result.first.source.must_equal 'mailto:doc.writer@asciidoc.org[Doc Writer]'
+      result.first.text.must_equal 'doc.writer@asciidoc.org'
+      result.first.target.must_equal 'doc.writer@asciidoc.org'
+      result.first.link.must_equal 'Doc Writer'
+      result.first.subject.must_be_nil
+    end
+    it 'should map an explicit email with subject' do
+      input = 'Write me about pull request at: mailto:doc.writer@asciidoc.org[Doc Writer, Pull request]'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'Write me about pull request at: '
+      result[1].source.must_equal 'mailto:doc.writer@asciidoc.org[Doc Writer, Pull request]'
+      result[1].text.must_equal 'doc.writer@asciidoc.org'
+      result[1].target.must_equal 'doc.writer@asciidoc.org'
+      result[1].link.must_equal 'Doc Writer'
+      result[1].subject.must_equal 'Pull request'
+    end
+    it 'should map an explicit email with a subject and a body' do
+      input = 'mailto:doc.writer@asciidoc.org[Doc Writer, Pull request, Please accept my pull request]'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 1
+      result.first.source.must_equal 'mailto:doc.writer@asciidoc.org[Doc Writer, Pull request, Please accept my pull request]'
+      result.first.text.must_equal 'doc.writer@asciidoc.org'
+      result.first.target.must_equal 'doc.writer@asciidoc.org'
+      result.first.link.must_equal 'Doc Writer'
+      result.first.subject.must_equal 'Pull request'
+      result.first.body.must_equal 'Please accept my pull request'
+    end
+  end
 end

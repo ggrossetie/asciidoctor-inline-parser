@@ -11,6 +11,8 @@ module Asciidoctor
       'AsciidoctorGrammar::MonospacedQuoted' => 'Code',
       'AsciidoctorGrammar::SuperscriptQuoted' => 'Superscript',
       'AsciidoctorGrammar::SubscriptQuoted' => 'Subscript',
+      'AsciidoctorEmailGrammar::Email' => 'Email',
+      'AsciidoctorEmailGrammar::EmailMacro' => 'Email'
     }
 
     # Map a Treetop AST to an Asciidoctor AST
@@ -58,7 +60,16 @@ module Asciidoctor
         elsif (clazz = CLASSES_MAPPER[node.class.name])
           inline_node = Object.const_get("::Asciidoctor::InlineParser::#{clazz}").new
           inline_node.source = node.text_value
-          inline_node.text = node.instance_variable_get('@comprehensive_elements').first.text_value
+          if node.class.name == 'AsciidoctorEmailGrammar::Email'
+            inline_node.text = inline_node.target = inline_node.link = inline_node.source
+          elsif node.class.name == 'AsciidoctorEmailGrammar::EmailMacro'
+            inline_node.text = inline_node.target = node.elements[1].text_value
+            inline_node.link = node.name
+            inline_node.subject = node.subject
+            inline_node.body = node.body
+          else
+            inline_node.text = node.instance_variable_get('@comprehensive_elements').first.text_value
+          end
           if parent
             inline_node.parent = parent
             parent.children << inline_node

@@ -40,11 +40,24 @@ module Asciidoctor
     class Anchor
     end
 
-    class Email
+    # Email
+    class Email < Node
+      # The email address (target)
+      attr_accessor :target
+
+      # The name of the link
+      attr_accessor :link
+
+      # The subject of the email (may be nil)
+      attr_accessor :subject
+
+      # The body of the email (may be nil)
+      attr_accessor :body
     end
 
     class DoubleQuotation
     end
+
     class SingleQuotation
     end
 
