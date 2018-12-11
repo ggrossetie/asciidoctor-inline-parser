@@ -43,6 +43,8 @@ module Asciidoctor
       attr_accessor :target
 
       # The name of the anchor
+      # QUESTION should we rename to "name" or "label" ?
+      # QUESTION if the name is not defined, should the value be nil or equals to the target ?
       attr_accessor :link
 
       # An array of roles
@@ -55,6 +57,8 @@ module Asciidoctor
       attr_accessor :target
 
       # The name of the link
+      # QUESTION should we rename to "name" or "label" ?
+      # QUESTION if the name is not defined, should the value be nil or equals to the target ?
       attr_accessor :link
 
       # The subject of the email (may be nil)
