@@ -58,7 +58,7 @@ module Asciidoctor
     class DoubleQuotation < Node
     end
 
-    class SingleQuotation
+    class SingleQuotation < Node
     end
 
     # Text node

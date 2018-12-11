@@ -14,6 +14,7 @@ module Asciidoctor
       'AsciidoctorEmailGrammar::Email' => 'Email',
       'AsciidoctorEmailGrammar::EmailMacro' => 'Email',
       'AsciidoctorGrammar::DoubleCurvedQuoted' => 'DoubleQuotation',
+      'AsciidoctorGrammar::SingleCurvedQuoted' => 'SingleQuotation',
     }
 
     # Map a Treetop AST to an Asciidoctor AST

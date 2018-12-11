@@ -207,5 +207,14 @@ describe 'mapper' do
       result.first.text.must_equal 'double curved quotes'
       result.first.class.name.must_equal 'Asciidoctor::InlineParser::DoubleQuotation'
     end
+    it 'should map single quotation' do
+      input = '\'`single curved quotes`\''
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 1
+      result.first.source.must_equal '\'`single curved quotes`\''
+      result.first.text.must_equal 'single curved quotes'
+      result.first.class.name.must_equal 'Asciidoctor::InlineParser::SingleQuotation'
+    end
   end
 end
