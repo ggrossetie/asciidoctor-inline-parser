@@ -66,6 +66,8 @@ module Asciidoctor
 
       # The body of the email (may be nil)
       attr_accessor :body
+
+      alias address target
     end
 
     class DoubleQuotation < Node
@@ -81,7 +83,10 @@ module Asciidoctor
     class Image
     end
 
-    class Keyboard
+    # Keyboard kbd
+    class Keyboard < Node
+      # The list of keys combination
+      attr_accessor :keys
     end
 
     class Button

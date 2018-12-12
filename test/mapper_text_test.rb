@@ -143,6 +143,7 @@ describe 'mapper' do
       result[1].source.must_equal 'doc.writer@asciidoc.org'
       result[1].text.must_equal 'doc.writer@asciidoc.org'
       result[1].target.must_equal 'doc.writer@asciidoc.org'
+      result[1].address.must_equal 'doc.writer@asciidoc.org'
       result[1].link.must_equal 'doc.writer@asciidoc.org'
       result[1].subject.must_be_nil
       result[2].source.must_equal '.'
@@ -156,6 +157,7 @@ describe 'mapper' do
       result[1].source.must_equal 'mailto:doc.writer@asciidoc.org[]'
       result[1].text.must_equal 'doc.writer@asciidoc.org'
       result[1].target.must_equal 'doc.writer@asciidoc.org'
+      result[1].address.must_equal 'doc.writer@asciidoc.org'
       result[1].link.must_equal 'doc.writer@asciidoc.org'
       result[1].subject.must_be_nil
       result[2].source.must_equal '!'
@@ -168,6 +170,7 @@ describe 'mapper' do
       result.first.source.must_equal 'mailto:doc.writer@asciidoc.org[Doc Writer]'
       result.first.text.must_equal 'doc.writer@asciidoc.org'
       result.first.target.must_equal 'doc.writer@asciidoc.org'
+      result.first.address.must_equal 'doc.writer@asciidoc.org'
       result.first.link.must_equal 'Doc Writer'
       result.first.subject.must_be_nil
     end
@@ -180,6 +183,7 @@ describe 'mapper' do
       result[1].source.must_equal 'mailto:doc.writer@asciidoc.org[Doc Writer, Pull request]'
       result[1].text.must_equal 'doc.writer@asciidoc.org'
       result[1].target.must_equal 'doc.writer@asciidoc.org'
+      result[1].address.must_equal 'doc.writer@asciidoc.org'
       result[1].link.must_equal 'Doc Writer'
       result[1].subject.must_equal 'Pull request'
     end
@@ -191,6 +195,7 @@ describe 'mapper' do
       result.first.source.must_equal 'mailto:doc.writer@asciidoc.org[Doc Writer, Pull request, Please accept my pull request]'
       result.first.text.must_equal 'doc.writer@asciidoc.org'
       result.first.target.must_equal 'doc.writer@asciidoc.org'
+      result.first.address.must_equal 'doc.writer@asciidoc.org'
       result.first.link.must_equal 'Doc Writer'
       result.first.subject.must_equal 'Pull request'
       result.first.body.must_equal 'Please accept my pull request'
@@ -232,6 +237,59 @@ describe 'mapper' do
       result[1].class.name.must_equal 'Asciidoctor::InlineParser::Anchor'
       result[2].source.must_equal '.'
       result[2].class.name.must_equal 'Asciidoctor::InlineParser::Text'
+    end
+  end
+
+  describe 'keyboard' do
+    it 'should map kbd macro' do
+      input = 'Toggle fullscreen: kbd:[F11]'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'Toggle fullscreen: '
+      result[1].source.must_equal 'kbd:[F11]'
+      result[1].text.must_equal 'F11'
+      result[1].keys.must_include 'F11'
+    end
+
+    it 'should map kbd macro with a combination of 3 keys' do
+      input = 'New incognito window: kbd:[Ctrl+Shift+N]'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'New incognito window: '
+      result[1].source.must_equal 'kbd:[Ctrl+Shift+N]'
+      result[1].text.must_equal 'Ctrl+Shift+N'
+      result[1].keys.size.must_equal 3
+      result[1].keys.must_include 'Ctrl'
+      result[1].keys.must_include 'Shift'
+      result[1].keys.must_include 'N'
+    end
+
+    it 'should map kbd macro with a plus key' do
+      input = 'Increase zoom: kbd:[Ctrl + +]'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'Increase zoom: '
+      result[1].source.must_equal 'kbd:[Ctrl + +]'
+      result[1].text.must_equal 'Ctrl + +'
+      result[1].keys.size.must_equal 2
+      result[1].keys.must_include 'Ctrl'
+      result[1].keys.must_include '+'
+    end
+
+    it 'should map kdb macro with an escaped closed bracket' do
+      input = 'Jump to keyword: kbd:[Ctrl+\]]'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'Jump to keyword: '
+      result[1].source.must_equal 'kbd:[Ctrl+\]]'
+      result[1].text.must_equal 'Ctrl+\]'
+      result[1].keys.size.must_equal 2
+      result[1].keys.must_include 'Ctrl'
+      result[1].keys.must_include ']'
     end
   end
 end

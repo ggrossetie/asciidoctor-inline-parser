@@ -656,7 +656,10 @@ module AsciidoctorKbdGrammar
 
     def keys
       content_node = @comprehensive_elements.select { |el| attr_content? el }.first
-      content_node.text_value.split('+').map(&:strip) if content_node
+      content_node.text_value
+                  .split('+')
+                  .map(&:strip)
+                  .map { |key| key.empty? ? '+' : (key.strip.gsub '\]', ']') } if content_node
     end
 
     private
