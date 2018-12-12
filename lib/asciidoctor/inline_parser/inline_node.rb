@@ -112,5 +112,15 @@ module Asciidoctor
 
     class Button
     end
+
+    # Passthrough
+    class Pass < Node
+      # The list of substitutions to apply
+      attr_accessor :substitutions
+
+      def initialize
+        @substitutions = []
+      end
+    end
   end
 end

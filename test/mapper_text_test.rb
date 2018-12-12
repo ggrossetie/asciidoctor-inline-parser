@@ -326,4 +326,48 @@ describe 'mapper' do
       result[1].source.must_equal ' What a beautiful sunset!'
     end
   end
+
+  describe 'passthrough' do
+    it 'should map a raw (triple plus)' do
+      input =  '+++<code>inline code</code>+++'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 1
+      result.first.source.must_equal '+++<code>inline code</code>+++'
+      result.first.text.must_equal '<code>inline code</code>'
+      result.first.substitutions.size.must_equal 0 # none
+    end
+    it 'should map a raw (inline pass macro)' do
+      input =  'pass:[<code>inline code</code>] is monospaced.'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'pass:[<code>inline code</code>]'
+      result.first.text.must_equal '<code>inline code</code>'
+      result.first.substitutions.size.must_equal 0 # none
+      result[1].source.must_equal ' is monospaced.'
+    end
+    it 'should map a verbatim' do
+      input = 'pass:[<u>underline me</u>] is underlined.'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'pass:[<u>underline me</u>]'
+      result.first.text.must_equal '<u>underline me</u>'
+      result.first.substitutions.size.must_equal 0 # none
+      result[1].source.must_equal ' is underlined.'
+    end
+    it 'should map an inline pass macro with subs' do
+      input =  %(pass:specialcharacters,quotes[<code>['code'\\]</code>])
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 1
+    end
+    it 'should map an escaped inline pass macro' do
+      input =  'use the `\pass:c[]` macro'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 3
+    end
+  end
 end

@@ -18,6 +18,8 @@ module Asciidoctor
       'AsciidoctorLinkGrammar::Link' => 'Anchor',
       'AsciidoctorKbdGrammar::Kbd' => 'Keyboard',
       'AsciidoctorImageGrammar::Image' => 'Image',
+      'AsciidoctorPassthroughGrammar::PassthroughTriplePlus' => 'Pass',
+      'AsciidoctorPassthroughGrammar::PassthroughInlineMacro' => 'Pass',
     }
 
     # Map a Treetop AST to an Asciidoctor AST
@@ -87,6 +89,10 @@ module Asciidoctor
             inline_node.roles = node.roles
             inline_node.width = node.width
             inline_node.height = node.height
+          elsif node.class.name == 'AsciidoctorPassthroughGrammar::PassthroughTriplePlus'
+            inline_node.text = node.content
+          elsif node.class.name == 'AsciidoctorPassthroughGrammar::PassthroughInlineMacro'
+            inline_node.text = node.content
           else
             inline_node.text = node.instance_variable_get('@comprehensive_elements').first.text_value
           end
