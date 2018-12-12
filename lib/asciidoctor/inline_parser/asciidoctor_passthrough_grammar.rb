@@ -163,12 +163,7 @@ module AsciidoctorPassthroughGrammar
         break
       end
     end
-    if s0.empty?
-      @index = i0
-      r0 = nil
-    else
-      r0 = instantiate_node(PassthroughInlineMacroSubs,input, i0...index, s0)
-    end
+    r0 = instantiate_node(PassthroughInlineMacroSubs,input, i0...index, s0)
 
     node_cache[:passthrough_inline_macro_subs][start_index] = r0
 

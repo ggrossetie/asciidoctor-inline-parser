@@ -9,7 +9,7 @@ grammar AsciidoctorPassthroughGrammar
   end
 
   rule passthrough_inline_macro_subs
-    ( ',' / passthrough_inline_macro_sub )+ <PassthroughInlineMacroSubs>
+    ( ',' / passthrough_inline_macro_sub )* <PassthroughInlineMacroSubs>
   end
 
   rule passthrough_inline_macro_sub
