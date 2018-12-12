@@ -292,4 +292,38 @@ describe 'mapper' do
       result[1].keys.must_include ']'
     end
   end
+
+  describe 'image' do
+    it 'should map an image with name and title' do
+      input = 'Click image:icons/play.png[Play icon, title="Play"] to get the party started.'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 3
+      result.first.source.must_equal 'Click '
+      result[1].source.must_equal 'image:icons/play.png[Play icon, title="Play"]'
+      result[1].text.must_equal 'Play icon'
+      result[1].target.must_equal 'icons/play.png'
+      result[1].title.must_equal 'Play'
+      result[1].alt.must_equal 'Play icon'
+      result[2].source.must_equal ' to get the party started.'
+    end
+
+    it 'should map an image with a positioning role, width, height and alt' do
+      input =  'image:sunset.jpg[Sunset,200,150,role="right"] What a beautiful sunset!'
+      ast = ::Asciidoctor::InlineParser.raw_parse input
+      result = ::Asciidoctor::InlineParser::Mapper.map ast
+      result.size.must_equal 2
+      result.first.source.must_equal 'image:sunset.jpg[Sunset,200,150,role="right"]'
+      result.first.text.must_equal 'Sunset'
+      result.first.target.must_equal 'sunset.jpg'
+      result.first.title.must_equal nil
+      result.first.alt.must_equal 'Sunset'
+      result.first.width.must_equal '200'
+      result.first.height.must_equal '150'
+      result.first.roles.size.must_equal 2
+      result.first.roles.must_include 'right'
+      result.first.roles.must_include 'image' # QUESTION should we remove this default role named "image" (converter concern ?)
+      result[1].source.must_equal ' What a beautiful sunset!'
+    end
+  end
 end

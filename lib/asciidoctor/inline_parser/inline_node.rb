@@ -80,7 +80,26 @@ module Asciidoctor
     class Text < Node
     end
 
-    class Image
+    # Image
+    class Image < Node
+      # The textual description of the image (may be nil)
+      attr_accessor :alt
+
+      # The title of the image (may be nil)
+      attr_accessor :title
+
+      # The image URL (src)
+      attr_accessor :target
+
+      # The image width (may be nil)
+      attr_accessor :width
+
+      # The image height (may be nil)
+      attr_accessor :height
+
+      # An array of roles
+      # QUESTION should we move roles up in the hierarchy ?
+      attr_accessor :roles
     end
 
     # Keyboard kbd

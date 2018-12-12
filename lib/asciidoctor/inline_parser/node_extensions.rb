@@ -586,13 +586,24 @@ module AsciidoctorImageGrammar
   # Attributes content
   class ImageAttributesContent < ::Treetop::Runtime::SyntaxNode
     def attrs
-      @comprehensive_elements.each_with_index.map do |el, index|
-        if el.instance_of? ::AsciidoctorImageGrammar::ImageNamedAttribute
-          { el.key => el.value }
-        else
-          { index.to_s => el.value }
-        end
-      end.inject(:merge)
+      @comprehensive_elements.select { |el| (named_attr? el) || (attr_value? el) }
+                             .each_with_index.map do |el, index|
+                               if named_attr? el
+                                 { el.key => el.value }
+                               elsif attr_value? el
+                                 { index.to_s => el.value }
+                               end
+                             end.inject(:merge)
+    end
+
+    private
+
+    def named_attr? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageNamedAttribute
+    end
+
+    def attr_value? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageAttributeValue
     end
   end
   # Named attribute

@@ -17,6 +17,7 @@ module Asciidoctor
       'AsciidoctorGrammar::SingleCurvedQuoted' => 'SingleQuotation',
       'AsciidoctorLinkGrammar::Link' => 'Anchor',
       'AsciidoctorKbdGrammar::Kbd' => 'Keyboard',
+      'AsciidoctorImageGrammar::Image' => 'Image',
     }
 
     # Map a Treetop AST to an Asciidoctor AST
@@ -78,6 +79,14 @@ module Asciidoctor
           elsif node.class.name == 'AsciidoctorKbdGrammar::Kbd'
             inline_node.text = node.elements[1].text_value
             inline_node.keys = node.keys
+          elsif node.class.name == 'AsciidoctorImageGrammar::Image'
+            inline_node.target = node.target
+            inline_node.alt = node.alt
+            inline_node.text = inline_node.alt || inline_node.target
+            inline_node.title = node.title
+            inline_node.roles = node.roles
+            inline_node.width = node.width
+            inline_node.height = node.height
           else
             inline_node.text = node.instance_variable_get('@comprehensive_elements').first.text_value
           end
