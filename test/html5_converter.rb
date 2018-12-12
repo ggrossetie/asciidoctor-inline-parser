@@ -111,7 +111,7 @@ class Html5Converter
 
   def kbd node
     keys_html = lambda { |el|
-      el.keys.map { |key| "<kbd>#{(key.empty? ? '+' : key).strip.gsub '\]', ']'}</kbd>" }.join '+'
+      el.keys.map { |key| "<kbd>#{key}</kbd>" }.join '+'
     }
     if node.keys.size > 1
       %(<span class="keyseq">#{keys_html.call node}</span>)
@@ -137,8 +137,7 @@ class Html5Converter
     }
     items = node.items
     items_html = items.each_with_index.map do |item, index|
-      item_text = item.strip.gsub '\]', ']'
-      %(<b class="#{item_class.call index, items.size}">#{item_text}</b>)
+      %(<b class="#{item_class.call index, items.size}">#{item}</b>)
     end.join '&nbsp;<i class="fa fa-angle-right caret"></i> '
     if items && items.size > 1
       %(<span class="menuseq">#{items_html}</span>)

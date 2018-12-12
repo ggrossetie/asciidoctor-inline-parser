@@ -586,13 +586,24 @@ module AsciidoctorImageGrammar
   # Attributes content
   class ImageAttributesContent < ::Treetop::Runtime::SyntaxNode
     def attrs
-      @comprehensive_elements.each_with_index.map do |el, index|
-        if el.instance_of? ::AsciidoctorImageGrammar::ImageNamedAttribute
-          { el.key => el.value }
-        else
-          { index.to_s => el.value }
-        end
-      end.inject(:merge)
+      @comprehensive_elements.select { |el| (named_attr? el) || (attr_value? el) }
+                             .each_with_index.map do |el, index|
+                               if named_attr? el
+                                 { el.key => el.value }
+                               elsif attr_value? el
+                                 { index.to_s => el.value }
+                               end
+                             end.inject(:merge)
+    end
+
+    private
+
+    def named_attr? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageNamedAttribute
+    end
+
+    def attr_value? node
+      node.instance_of? ::AsciidoctorImageGrammar::ImageAttributeValue
     end
   end
   # Named attribute
@@ -648,7 +659,7 @@ module AsciidoctorImageGrammar
 end
 
 module AsciidoctorKbdGrammar
-  # Keybord kbd inline macro
+  # Keyboard kbd inline macro
   class Kbd < ::Treetop::Runtime::SyntaxNode
     def node_name
       'kbd'
@@ -656,7 +667,10 @@ module AsciidoctorKbdGrammar
 
     def keys
       content_node = @comprehensive_elements.select { |el| attr_content? el }.first
-      content_node.text_value.split('+').map(&:strip) if content_node
+      content_node.text_value
+                  .split('+')
+                  .map(&:strip)
+                  .map { |key| key.empty? ? '+' : (key.strip.gsub '\]', ']') } if content_node
     end
 
     private
