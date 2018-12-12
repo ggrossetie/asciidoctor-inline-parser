@@ -82,6 +82,8 @@ module Asciidoctor
 
     # Image
     class Image < Node
+      # QUESTION what the text of this node should be ? the alt ? the target ?
+
       # The textual description of the image (may be nil)
       attr_accessor :alt
 
@@ -98,7 +100,7 @@ module Asciidoctor
       attr_accessor :height
 
       # An array of roles
-      # QUESTION should we move roles up in the hierarchy ?
+      # QUESTION should we move roles up in the class hierarchy ?
       attr_accessor :roles
     end
 

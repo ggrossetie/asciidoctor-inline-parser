@@ -322,7 +322,7 @@ describe 'mapper' do
       result.first.height.must_equal '150'
       result.first.roles.size.must_equal 2
       result.first.roles.must_include 'right'
-      result.first.roles.must_include 'image' # QUESTION should we remove this default role named "image" (converter concern ?)
+      result.first.roles.must_include 'image' # QUESTION should we remove the default role named "image" (ie. it's a converter concern ?)
       result[1].source.must_equal ' What a beautiful sunset!'
     end
   end
